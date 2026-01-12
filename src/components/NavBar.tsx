@@ -1,12 +1,10 @@
 import { AppBar, Button, Toolbar, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
-const NavBar = () => {
+const NavBar: React.FC<{ onLogout: () => void, username?: string }> = ({ onLogout, username }) => {
 
-    const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem('token');
-        navigate('/login');
+        onLogout();
     };
 
     return (
@@ -14,6 +12,9 @@ const NavBar = () => {
             <Toolbar>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
                 Dashboard
+                </Typography>
+                <Typography variant="h6" sx={{ mr: 2 }}>
+                {username}
                 </Typography>
                 <Button color="inherit" variant="outlined" onClick={handleLogout}>
                 Logout

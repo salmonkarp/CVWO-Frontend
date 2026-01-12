@@ -1,12 +1,17 @@
 import { Box, Typography } from '@mui/material';
 import NavBar from '../components/NavBar';
 
-const Dashboard = () => {
+interface DashboardProps {
+  onLogout: () => void;
+  username?: string;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ onLogout, username }) => {
 
   return (
     <Box>
       
-      <NavBar />
+      <NavBar onLogout={onLogout} username={username} />
       
       <Box
         sx={{

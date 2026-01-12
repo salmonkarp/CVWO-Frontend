@@ -1,41 +1,73 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, IconButton } from '@mui/material';
+import { ArrowBack } from '@mui/icons-material';
+import { useNavigate } from 'react-router';
 
-const Login = () => {
+interface LoginProps {
+  onLoginSuccess: (token: string, username: string) => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    const response = await fetch('http://localhost:8080/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username })
-    });
-    const data = await response.text();
-    if (data.includes('token')) {
-      localStorage.setItem('token', data);
-      console.log('Login successful, token stored');
-      navigate('/dashboard');
-    } else {
-      alert('Login failed');
+    setIsRequesting(true);
+    setIsError(false);
+    try {
+      const response = await fetch('http://localhost:8080/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username })
+      });
+
+      const data = await response.text();
+
+      if (response.ok && data.includes('token')) {
+        localStorage.setItem('token', data);
+        localStorage.setItem('username', username);
+        onLoginSuccess(data, username);
+      } else {
+        setIsError(true);
+      }
+    } catch {
+      setIsError(true);
+    } finally {
+      setIsRequesting(false);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleLogin();
   };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', width: 300, m: 'auto', height: '100vh', justifyContent: 'center' }}>
+      <Box sx={{ height: 20, mb: 2, ml: -1 }}>
+        <IconButton onClick={() => navigate('/home')}>
+          <ArrowBack />
+        </IconButton>
+      </Box>
       <Typography variant="h5" sx={{ mb: 2 }}>
         Login to Qrator
       </Typography>
-      <TextField
-        label="Username"
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-        sx={{ mb: 2 }}
-      />
-      <Button variant="contained" onClick={handleLogin}>
-        Login
-      </Button>
+      <form onSubmit={handleSubmit} style={{ display: 'contents' }}>
+        <TextField
+          label="Username"
+          value={username}
+          onChange={e => {setUsername(e.target.value); setIsError(false);}}
+          sx={{ mb: 2 }}
+          required={true}
+          error={isError}
+          helperText={isError ? 'Login failed. Please try again.' : ''}
+        />
+        <Button variant="contained" type='submit' disabled={isRequesting || !username}>
+          {isRequesting ? 'Logging in...' : 'Login'}
+        </Button>
+      </form>
     </Box>
   );
 };
