@@ -17,13 +17,13 @@ const Home = () => {
       }}
     >
       <Typography variant="h3" component="h1">
-        Welcome to My App
+        Welcome to Qrator.
       </Typography>
       <Typography variant="body1">
-        This is the home page. Please log in to access the dashboard.
+        Start the discussion now.
       </Typography>
       <Button variant="contained" onClick={() => navigate('/login')}>
-        Go to Login
+        Login
       </Button>
     </Box>
   );

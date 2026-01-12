@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Box } from '@mui/material';
+import { TextField, Button, Box, Typography } from '@mui/material';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -15,6 +15,7 @@ const Login = () => {
     const data = await response.text();
     if (data.includes('token')) {
       localStorage.setItem('token', data);
+      console.log('Login successful, token stored');
       navigate('/dashboard');
     } else {
       alert('Login failed');
@@ -22,7 +23,10 @@ const Login = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', width: 300, m: 'auto', mt: 10 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', width: 300, m: 'auto', height: '100vh', justifyContent: 'center' }}>
+      <Typography variant="h5" sx={{ mb: 2 }}>
+        Login to Qrator
+      </Typography>
       <TextField
         label="Username"
         value={username}

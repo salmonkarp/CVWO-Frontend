@@ -1,29 +1,13 @@
-import { Box, Typography, Button, AppBar, Toolbar } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Typography } from '@mui/material';
+import NavBar from '../components/NavBar';
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // remove JWT
-    navigate('/login');
-  };
 
   return (
     <Box>
-      {/* AppBar */}
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Dashboard
-          </Typography>
-          <Button color="inherit" onClick={handleLogout}>
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
-
-      {/* Main content */}
+      
+      <NavBar />
+      
       <Box
         sx={{
           p: 4,
@@ -33,7 +17,7 @@ const Dashboard = () => {
           gap: 2
         }}
       >
-        <Typography variant="h4">Welcome to your dashboard!</Typography>
+        <Typography variant="h4">Welcome to your Qrator dashboard!</Typography>
         <Typography variant="body1">
           Here you can access your app features.
         </Typography>
