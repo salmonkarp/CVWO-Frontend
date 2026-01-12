@@ -3,6 +3,18 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { useState } from "react";
+import { createTheme, ThemeProvider } from "@mui/material";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#512da8",
+    },
+    secondary: {
+      main: '#ec407a',
+    },
+  },
+});
 
 const App = () => {
   const [token, setToken] = useState<string | null>(
@@ -29,7 +41,8 @@ const App = () => {
   };
 
   return (
-    <Routes>
+    <ThemeProvider theme={theme}>
+      <Routes>
       <Route
         path="/"
         element={<Navigate to={isLoggedIn ? "/dashboard" : "/home"} replace />}
@@ -58,6 +71,8 @@ const App = () => {
         element={<Navigate to="/" replace />}
       />
     </Routes>
+    </ThemeProvider>
+    
   );
 };
 

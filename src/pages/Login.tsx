@@ -64,8 +64,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           error={isError}
           helperText={isError ? 'Login failed. Please try again.' : ''}
         />
-        <Button variant="contained" type='submit' disabled={isRequesting || !username}>
-          {isRequesting ? 'Logging in...' : 'Login'}
+        <Button variant="contained" type='submit' loading={isRequesting} fullWidth>
+          Login
         </Button>
       </form>
     </Box>
