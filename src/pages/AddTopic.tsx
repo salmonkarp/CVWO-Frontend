@@ -2,6 +2,7 @@ import {
   Button,
   Container,
   Paper,
+  styled,
   TextField,
   Toolbar,
   Typography,
@@ -10,20 +11,63 @@ import NavBar from "../components/NavBar";
 import type { DashboardProps } from "./Dashboard";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 export default function AddTopic(props: DashboardProps) {
-  const { onLogout, username } = props;
+  const { onLogout } = props;
   // TODO: Add image upload later
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [file, setFile] = useState<File | null>(null);
   const navigate = useNavigate();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
+    var payload;
+    if (file== null) {
+      payload = {
+        name,
+        description,
+        image: null,
+      }
+    } else {
+      const base64Image = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result as string;
+          resolve(result.split(",")[1]);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      payload = {
+        name,
+        description,
+        image: base64Image || null,
+      }
+    }
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_API_URL + "/addtopic",
@@ -35,7 +79,7 @@ export default function AddTopic(props: DashboardProps) {
               JSON.parse(localStorage.getItem("token") || "").token
             }`,
           },
-          body: JSON.stringify({ name, description }),
+          body: JSON.stringify(payload),
         }
       );
       const data = await response.text();
@@ -95,12 +139,30 @@ export default function AddTopic(props: DashboardProps) {
             ></TextField>
             <TextField
               key="description"
-              label="Description"
+              label="Description (optional)"
               variant="standard"
               multiline
               value={description}
               onChange={(e) => {setDescription(e.target.value); setIsError(false); setErrorMessage("");}}
             ></TextField>
+
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUploadIcon />}
+              sx={{mt:2}}
+            >
+              Upload Image
+              <VisuallyHiddenInput
+                type="file"
+                onChange={handleFileChange}
+                multiple
+              />
+            </Button>
+            {file && <Typography variant="body2">Selected file: {file.name}</Typography>}
+
 
             <Button
               variant="contained"
