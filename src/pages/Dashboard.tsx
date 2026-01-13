@@ -1,4 +1,5 @@
-import { Box, Container, Toolbar, Typography } from '@mui/material';
+import { Container, Fab, Toolbar, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import NavBar from '../components/NavBar';
 import TopicsList from '../components/TopicsList';
 
@@ -11,7 +12,7 @@ export default function Dashboard(props: DashboardProps) {
   const { onLogout, username } = props;
   
   return (
-    <Box sx={{display:'flex', minHeight: '100vh'}}>
+    <Container sx={{display:'flex', minHeight: '100vh'}}>
       <NavBar onLogout={onLogout} window={window} />
       <Container
         sx={{
@@ -23,13 +24,21 @@ export default function Dashboard(props: DashboardProps) {
         }}
       >
         <Toolbar />
-        <Typography variant="h4">Welcome to Qrator, {username}.</Typography>
+        <Typography variant="h5">Welcome to Qrator, {username}.</Typography>
         <Typography variant="body1">
           Start the discussion now.
         </Typography>
         <TopicsList></TopicsList>
-        
+        <Fab color="secondary" aria-label="Add topic" size="large"
+          sx={
+              {
+              position: "fixed",
+              bottom: 32,
+              right: 32
+          }}>
+              <AddIcon></AddIcon>
+          </Fab>
       </Container>
-    </Box>
+    </Container>
   );
 };
