@@ -1,6 +1,7 @@
 import { AppBar, Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import React from "react";
+import { useNavigate } from "react-router";
 
 interface NavBarProps {
     onLogout: () => void;
@@ -14,6 +15,7 @@ export default function NavBar(props: NavBarProps) {
     const { onLogout, window } = props;
     const container = window !== undefined ? () => window.document.body : undefined;
     const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
+    const navigate = useNavigate();
 
     const handleDrawerToggle = () => {
         setIsMobileDrawerOpen((prevState) => !prevState);
@@ -33,7 +35,7 @@ export default function NavBar(props: NavBarProps) {
             <List>
                 {navItems.map((item) => (
                 <ListItem key={item} disablePadding>
-                    <ListItemButton sx={{ textAlign: 'center' }} href={`/${item.toLowerCase()}`}>
+                    <ListItemButton sx={{ textAlign: 'center' }} onClick={() => navigate(`/${item.toLowerCase()}`)}>
                     <ListItemText primary={item} />
                     </ListItemButton>
                 </ListItem>
@@ -78,7 +80,7 @@ export default function NavBar(props: NavBarProps) {
                 </Typography>
                 <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                     {navItems.map((item) => (
-                    <Button key={item} href={`/${item.toLowerCase()}`} color="inherit">
+                    <Button key={item} onClick={() => navigate(`/${item.toLowerCase()}`)} color="inherit">
                         {item}
                     </Button>
                     ))}

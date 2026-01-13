@@ -1,7 +1,9 @@
 import { Grid, Card, CardContent, Typography, CardMedia, CardActionArea } from "@mui/material";
+import { useNavigate } from "react-router";
 
 export default function TopicCard(props: {topic: any}) {
     const { topic } = props;
+    const navigate = useNavigate();
     return (
         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={topic.id} sx={{
             display: 'flex'
@@ -10,7 +12,7 @@ export default function TopicCard(props: {topic: any}) {
                 flexGrow: 1
             }}>
                 <CardActionArea sx={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "stretch", justifyContent: "flex-start" }}
-                href={`/t/${topic.name}`}>
+                onClick={() => navigate(`/t/${topic.name}`)}>
                 <CardMedia 
                     sx={{ height: 140 }}
                     image={topic.imageUrl || "https://placehold.net/9.png"}

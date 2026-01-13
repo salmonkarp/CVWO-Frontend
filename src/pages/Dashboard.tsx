@@ -2,14 +2,16 @@ import { Container, Fab, Toolbar, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import NavBar from '../components/NavBar';
 import TopicsList from '../components/TopicsList';
+import { useNavigate } from 'react-router';
 
-interface DashboardProps {
+export interface DashboardProps {
   onLogout: () => void;
   username?: string;
 }
 
 export default function Dashboard(props: DashboardProps) {
   const { onLogout, username } = props;
+  const navigate = useNavigate();
   
   return (
     <Container sx={{display:'flex', minHeight: '100vh'}}>
@@ -29,7 +31,8 @@ export default function Dashboard(props: DashboardProps) {
           Start the discussion now.
         </Typography>
         <TopicsList></TopicsList>
-        <Fab color="secondary" aria-label="Add topic" size="large"
+        {username == "admin" && ( //TOOD: Superficial, add verification on backend later
+        <Fab color="secondary" aria-label="Add topic" size="large" onClick={() => navigate("/addtopic")}
           sx={
               {
               position: "fixed",
@@ -38,6 +41,7 @@ export default function Dashboard(props: DashboardProps) {
           }}>
               <AddIcon></AddIcon>
           </Fab>
+        )}
       </Container>
     </Container>
   );

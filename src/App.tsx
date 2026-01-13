@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material";
+import AddTopic from "./pages/AddTopic";
 
 const theme = createTheme({
   palette: {
@@ -61,6 +62,16 @@ const App = () => {
         element={
           isLoggedIn ? (
             <Dashboard username={username || ""} onLogout={handleLogout} />
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+      <Route
+        path="/addtopic"
+        element={
+          isLoggedIn ? (
+            <AddTopic username={username || ""} onLogout={handleLogout} />
           ) : (
             <Navigate to="/login" />
           )

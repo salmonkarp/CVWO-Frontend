@@ -23,7 +23,9 @@ export default function TopicsList() {
             const data = await response.text();
             if (response.ok) {
                 const topicsData = JSON.parse(data);
-                setTopics(topicsData);
+                const sortedTopics = topicsData.sort((a: any, b: any) => a.name.localeCompare(b.name));
+                // TODO: Add sorting function later
+                setTopics(sortedTopics);
             } else {
                 console.error("Error fetching topics:", data);
             }
