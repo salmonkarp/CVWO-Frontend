@@ -4,7 +4,7 @@ import TopicCard from "./TopicCard";
 
 const TOPICS_PER_PAGE = 9;
 
-export default function TopicsList() {
+export default function TopicsList(props: {onLoadingComplete: () => void}) {
 
     const [topics, setTopics] = useState<Array<any>>([]);
     const [page, setPage] = useState(1);
@@ -31,6 +31,8 @@ export default function TopicsList() {
             }
         } catch (error) {
             console.error("Failed to fetch topics:", error);
+        } finally {
+            props.onLoadingComplete();
         }
     };
 
@@ -56,14 +58,11 @@ export default function TopicsList() {
                     ))}
                 </Grid>
             </Box>
-
-            
             
             <Box sx={{ mt: "auto", display: "flex", justifyContent: "center" }}>
                 <Pagination count={Math.ceil(topics.length / TOPICS_PER_PAGE)} page={page} onChange={(_event, value) => handlePageChange(value)} />
             </Box>
 
-            
         </Box>
     );
 }

@@ -25,6 +25,8 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
+const maxFileSizeInBytes = 2 * 1024 * 1024; // 2 MB
+
 export default function AddTopic(props: DashboardProps) {
   const { onLogout } = props;
   // TODO: Add image upload later
@@ -37,8 +39,17 @@ export default function AddTopic(props: DashboardProps) {
   const navigate = useNavigate();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsError(false);
+    setErrorMessage("");
+    // TODO: Enforce file size limit on backend as well
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      if (selectedFile.size > maxFileSizeInBytes) {
+        setIsError(true);
+        setErrorMessage("File size exceeds 2MB limit.");
+        return;
+      }
+      setFile(selectedFile);
     }
   };
 
@@ -134,8 +145,6 @@ export default function AddTopic(props: DashboardProps) {
               value={name}
               onChange={(e) => {setName(e.target.value); setIsError(false); setErrorMessage("");}}
               required
-              error={isError}
-              helperText={errorMessage}
             ></TextField>
             <TextField
               key="description"
@@ -163,6 +172,11 @@ export default function AddTopic(props: DashboardProps) {
             </Button>
             {file && <Typography variant="body2">Selected file: {file.name}</Typography>}
 
+            {isError && (
+              <Typography variant="body2" color="error">
+                {errorMessage}
+              </Typography>
+            )}
 
             <Button
               variant="contained"

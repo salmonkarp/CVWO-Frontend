@@ -1,7 +1,11 @@
-import { AppBar, Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Toolbar, Typography } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import React from "react";
 import { useNavigate } from "react-router";
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import HomeIcon from '@mui/icons-material/Home';
+import InfoIcon from '@mui/icons-material/Info';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 interface NavBarProps {
     onLogout: () => void;
@@ -27,21 +31,47 @@ export default function NavBar(props: NavBarProps) {
     };
 
     const drawer = (
-        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', backgroundColor: 'primary.main', color: 'primary.contrastText', height: '100%' }}>
-            <Typography variant="h6" sx={{ my: 2 }} fontWeight={"700"}>
-                Menu
-            </Typography>
+        <Box onClick={handleDrawerToggle} sx={{ height: '100%' }}>
             <Divider />
-            <List>
-                {navItems.map((item) => (
-                <ListItem key={item} disablePadding>
-                    <ListItemButton sx={{ textAlign: 'center' }} onClick={() => navigate(`/${item.toLowerCase()}`)}>
-                    <ListItemText primary={item} />
+            <List 
+            component="nav"
+            sx={{
+                bgcolor: 'background.paper'
+            }}
+            subheader={
+                <ListSubheader component="div">
+                Menu
+                </ListSubheader>
+            }>
+                <ListItem key={'dashboard'} disablePadding>
+                    <ListItemButton sx={{ textAlign: 'start' }} onClick={() => navigate(`/dashboard`)}>
+                    <ListItemIcon>
+                        <HomeIcon></HomeIcon>
+                    </ListItemIcon>
+                    <ListItemText primary={'Dashboard'} />
                     </ListItemButton>
                 </ListItem>
-                ))}
+                <ListItem key={'account'} disablePadding>
+                    <ListItemButton sx={{ textAlign: 'start' }} onClick={() => navigate(`/account`)}>
+                    <ListItemIcon>
+                        <ManageAccountsIcon></ManageAccountsIcon>
+                    </ListItemIcon>
+                    <ListItemText primary={'Account'} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem key={'about'} disablePadding>
+                    <ListItemButton sx={{ textAlign: 'start' }} onClick={() => navigate(`/about`)}>
+                    <ListItemIcon>
+                        <InfoIcon></InfoIcon>
+                    </ListItemIcon>
+                    <ListItemText primary={'About'} />
+                    </ListItemButton>
+                </ListItem>
                 <ListItem key="Logout" disablePadding>
-                    <ListItemButton sx={{ textAlign: 'center' }} onClick={handleLogout}>
+                    <ListItemButton sx={{ textAlign: 'start' }} onClick={handleLogout}>
+                    <ListItemIcon>
+                        <LogoutIcon></LogoutIcon>
+                    </ListItemIcon>
                     <ListItemText primary="Logout" />
                     </ListItemButton>
                 </ListItem>
@@ -63,7 +93,8 @@ export default function NavBar(props: NavBarProps) {
                     sx={{ mr: 2, display: { sm: 'none' } }}
                 >
                     <MenuIcon />
-                </IconButton>
+                </IconButton>       
+                <img src="/chat.png" alt="Qrator Logo" style={{ height: 30, marginRight: 16 }} />
                 <Typography
                     variant="h6"
                     component="div"
