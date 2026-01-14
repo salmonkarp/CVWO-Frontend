@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 export default function TopicCard(props: {topic: any}) {
     const { topic } = props;
+    console.log(topic);
     const navigate = useNavigate();
     return (
         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={topic.id} sx={{
@@ -15,7 +16,7 @@ export default function TopicCard(props: {topic: any}) {
                 onClick={() => navigate(`/t/${topic.name}`)}>
                 <CardMedia 
                     sx={{ height: 140 }}
-                    image={topic.image ? `data:image/jpeg;base64,${topic.image}` : "https://placehold.net/9.png"}
+                    image={topic.imageUrl ? import.meta.env.VITE_BACKEND_API_URL + topic.imageUrl : "https://placehold.net/9.png"}
                     title={topic.name}
                 />
                 <CardContent>

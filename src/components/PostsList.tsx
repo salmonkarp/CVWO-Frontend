@@ -1,4 +1,4 @@
-import { Box, Pagination } from "@mui/material";
+import { Box, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import PostCard from "./PostCard";
 
@@ -53,6 +53,13 @@ export default function PostsList(props: {topic: string; onLoadingComplete?: () 
                 {posts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE).map((post) => (
                     <PostCard post={post}></PostCard>
                 ))}
+                {
+                    posts.length === 0 && (
+                        <Box sx={{ mt: 4, textAlign: 'center' }}>
+                            <Typography variant="h6">No posts yet. Create one now!</Typography>
+                        </Box>
+                    )
+                }
             </Box>
             
             <Box sx={{ mt: "auto", display: "flex", justifyContent: "center" }}>

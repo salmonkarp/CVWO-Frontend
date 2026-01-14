@@ -1,9 +1,10 @@
-import { Box, Button, Card, CardActions, CardContent, CardMedia, Container, IconButton, Toolbar, Typography } from "@mui/material";
+import { Box, Button, Card, CardActions, CardContent, CardMedia, Container, Fab, IconButton, Toolbar, Typography } from "@mui/material";
 import NavBar from "../components/NavBar";
 import { useNavigate, useParams } from "react-router";
 import { ArrowBack } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import PostsList from "../components/PostsList";
+import AddIcon from '@mui/icons-material/Add';
 
 export default function Topic(props: {username: string; onLogout: () => void}) {
     const { onLogout } = props;
@@ -61,7 +62,7 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                     <Card>
                         <CardMedia 
                             sx={{ height: 140 }}
-                            image={topicDetails?.image ? `data:image/jpeg;base64,${topicDetails.image}` : "https://placehold.net/9.png"}
+                            image={topicDetails?.imageUrl ? import.meta.env.VITE_BACKEND_API_URL + topicDetails.imageUrl : "https://placehold.net/9.png"}
                             title={topicDetails?.name}
                         />
                         <CardContent>
@@ -74,8 +75,17 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                         </CardActions>
                     </Card>
                 )}
-                <Typography variant="h6">Posts</Typography>
+                <Typography variant="h6">Most Recent Posts</Typography>
                 <PostsList topic={topic || ''}></PostsList>
+                <Fab color="secondary" aria-label="Add post" size="large" onClick={() => navigate("/addpost/" + topic)}
+                    sx={
+                        {
+                        position: "fixed",
+                        bottom: 32,
+                        right: 32
+                    }}>
+                        <AddIcon></AddIcon>
+                </Fab>
             </Box>
         </Container>
     );

@@ -2,7 +2,7 @@ import { Box, Grid, Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import TopicCard from "./TopicCard";
 
-const TOPICS_PER_PAGE = 9;
+const TOPICS_PER_PAGE = 6;
 
 export default function TopicsList(props: {onLoadingComplete: () => void}) {
 
@@ -56,6 +56,13 @@ export default function TopicsList(props: {onLoadingComplete: () => void}) {
                     {topics.slice((page - 1) * TOPICS_PER_PAGE, page * TOPICS_PER_PAGE).map((topic) => (
                         <TopicCard topic={topic}></TopicCard>
                     ))}
+                    {
+                        topics.length === 0 && (
+                            <Box sx={{ mt: 4, ml: 2 }}>
+                                No topics yet. Create one now!
+                            </Box>
+                        )
+                    }
                 </Grid>
             </Box>
             

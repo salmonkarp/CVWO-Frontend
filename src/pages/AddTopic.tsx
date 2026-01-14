@@ -25,7 +25,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const maxFileSizeInBytes = 2 * 1024 * 1024; // 2 MB
+const maxFileSizeInBytes = 2 * 1024 * 1024;
 
 export default function AddTopic(props: DashboardProps) {
   const { onLogout } = props;
@@ -131,7 +131,10 @@ export default function AddTopic(props: DashboardProps) {
               display: "flex",
               flexDirection: "column",
               gap: 2,
-              width: 300,
+              width: {
+                  xs: "80%",
+                  sm: 300
+              },
               margin: "0 auto",
             }}
           >

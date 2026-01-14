@@ -6,6 +6,7 @@ import { useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material";
 import AddTopic from "./pages/AddTopic";
 import Topic from "./pages/Topic";
+import Account from "./pages/Account";
 
 const theme = createTheme({
   palette: {
@@ -83,6 +84,16 @@ const App = () => {
         element={
           isLoggedIn ? (
             <Topic username={username || ""} onLogout={handleLogout} />
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+      <Route
+        path="/account"
+        element={
+          isLoggedIn ? (
+            <Account username={username || ""} onLogout={handleLogout} />
           ) : (
             <Navigate to="/login" />
           )
