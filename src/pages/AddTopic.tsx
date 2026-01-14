@@ -1,6 +1,8 @@
 import {
+  Box,
   Button,
   Container,
+  IconButton,
   Paper,
   styled,
   TextField,
@@ -12,6 +14,7 @@ import type { DashboardProps } from "./Dashboard";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { ArrowBack } from "@mui/icons-material";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -138,6 +141,11 @@ export default function AddTopic(props: DashboardProps) {
               margin: "0 auto",
             }}
           >
+            <Box sx={{ height: 20, position: 'absolute', ml: -3, mt: -3}}>
+                <IconButton onClick={() => navigate('/dashboard')}>
+                <ArrowBack />
+                </IconButton>
+            </Box>
             <Typography variant="h5" align="center">
               Add a new topic
             </Typography>

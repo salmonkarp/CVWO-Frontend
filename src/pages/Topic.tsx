@@ -77,7 +77,7 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                 )}
                 <Typography variant="h6">Most Recent Posts</Typography>
                 <PostsList topic={topic || ''}></PostsList>
-                <Fab color="secondary" aria-label="Add post" size="large" onClick={() => navigate("/addpost/" + topic)}
+                <Fab color="secondary" aria-label="Add post" size="large" onClick={() => navigate("/t/" + topic + "/create")}
                     sx={
                         {
                         position: "fixed",
