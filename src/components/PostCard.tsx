@@ -11,7 +11,7 @@ export default function PostCard(props: {post: any, ownUsername: string}) {
 
     useEffect(() => {
         const loadUserData = async () => {
-            await new Promise(resolve => setTimeout(resolve, 200));
+            // await new Promise(resolve => setTimeout(resolve, 200));
             const userData = await fetchUserData(post.creator || '');
             if (userData) {
                 setPostUsername(userData.username);

@@ -1,4 +1,4 @@
-import { Backdrop, Box, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Container, Fab, IconButton, Toolbar, Typography } from "@mui/material";
+import { Box, Button, Card, CardActions, CardContent, CardMedia, Container, Fab, Fade, IconButton, Toolbar, Typography } from "@mui/material";
 import NavBar from "../components/NavBar";
 import { useNavigate, useParams } from "react-router";
 import { ArrowBack } from "@mui/icons-material";
@@ -34,7 +34,6 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
         } catch (error) {
             console.error("Error fetching topic details:", error);
         } finally {
-            await new Promise(resolve => setTimeout(resolve, 200));
             setIsLoading(false);
         }
         
@@ -46,8 +45,8 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
 
     return (
         <Container sx={{display:'flex', minHeight: '100vh'}}>
-            
             <NavBar onLogout={onLogout} window={window} />
+            <Fade in={!isLoading} timeout={500}>
             <Box
                 sx={{
                 p: 4,
@@ -57,12 +56,12 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                 gap: 2
                 }}
             >
-                <Backdrop
+                {/* <Backdrop
                     sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                     open={isLoading}
                     >
                     <CircularProgress color="inherit" />
-                </Backdrop>
+                </Backdrop> */}
                 <Toolbar />
                 <Box sx={{ height: 20, mb: 2, ml: -1 }}>
                     <IconButton onClick={() => navigate('/dashboard')}>
@@ -73,15 +72,15 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                     <Card>
                         <CardMedia 
                             sx={{ height: 140 }}
-                            image={topicDetails?.imageUrl ? import.meta.env.VITE_BACKEND_API_URL + topicDetails.imageUrl : "https://placehold.net/9.png"}
+                            image={topicDetails?.imageUrl ? import.meta.env.VITE_BACKEND_API_URL + topicDetails.imageUrl + `?v=${topicDetails.imageUpdatedAt || Date.now()}` : "https://placehold.net/9.png"}
                             title={topicDetails?.name}
                         />
                         <CardContent>
-                            <Typography variant="h5" fontWeight={700}>t/{topicDetails?.name}</Typography>
+                            <Typography variant="h5">t/{topicDetails?.name}</Typography>
                             <Typography variant="body1">{topicDetails?.description}</Typography>
                         </CardContent>
                         <CardActions sx={{display: 'flex', justifyContent: 'flex-end'}}>
-                            <Button>Edit</Button>
+                            <Button onClick={() => navigate('/t/' + topic + '/edit')}>Edit</Button>
                             <Button>Delete</Button>
                         </CardActions>
                     </Card>
@@ -98,6 +97,7 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                         <AddIcon></AddIcon>
                 </Fab>
             </Box>
+            </Fade>
         </Container>
     );
 }

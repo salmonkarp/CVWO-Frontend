@@ -94,11 +94,12 @@ export default function NavBar(props: NavBarProps) {
                 >
                     <MenuIcon />
                 </IconButton>       
-                <img src="/chat.png" alt="Qrator Logo" style={{ height: 30, marginRight: 16 }} />
+                <img src="/chat.png" alt="Qrator Logo" style={{ height: 30, marginRight: 8 }} />
                 <Typography
                     variant="h6"
                     component="div"
                     sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+                    // fontWeight={700}
                 >
                     Qrator Desktop
                 </Typography>

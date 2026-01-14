@@ -15,7 +15,7 @@ export default function TopicCard(props: {topic: any}) {
                 onClick={() => navigate(`/t/${topic.name}`)}>
                 <CardMedia 
                     sx={{ height: 140 }}
-                    image={topic.imageUrl ? import.meta.env.VITE_BACKEND_API_URL + topic.imageUrl : "https://placehold.net/9.png"}
+                    image={topic.imageUrl ? import.meta.env.VITE_BACKEND_API_URL + topic.imageUrl + `?v=${topic.imageUpdatedAt || Date.now()}` : "https://placehold.net/9.png"}
                     title={topic.name}
                 />
                 <CardContent>

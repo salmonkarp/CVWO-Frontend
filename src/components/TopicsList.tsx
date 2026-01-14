@@ -1,13 +1,20 @@
-import { Box, Grid, Pagination } from "@mui/material";
+import { Box, Fade, Grid, Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import TopicCard from "./TopicCard";
 
 const TOPICS_PER_PAGE = 6;
 
-export default function TopicsList(props: {onLoadingComplete: () => void}) {
-
+export default function TopicsList() {
+    const [isLoading, setIsLoading] = useState(true);
     const [topics, setTopics] = useState<Array<any>>([]);
     const [page, setPage] = useState(1);
+    const [fadeIn, setFadeIn] = useState(false);
+
+    useEffect(() => {
+        setFadeIn(false);
+        const id = setTimeout(() => setFadeIn(true), 0);
+        return () => clearTimeout(id);
+    }, [page, isLoading]);
 
     const fetchTopics = async () => {
         try {
@@ -32,7 +39,8 @@ export default function TopicsList(props: {onLoadingComplete: () => void}) {
         } catch (error) {
             console.error("Failed to fetch topics:", error);
         } finally {
-            props.onLoadingComplete();
+            await new Promise(resolve => setTimeout(resolve, 200));
+            setIsLoading(false);
         }
     };
 
@@ -51,6 +59,7 @@ export default function TopicsList(props: {onLoadingComplete: () => void}) {
             flexDirection: "column",
             gap: 2,
         }}>
+            <Fade in={fadeIn} timeout={500} key={page}>
             <Box sx={{ flexGrow: 1, width: "100%" }}>
                 <Grid container spacing={2}>
                     {topics.slice((page - 1) * TOPICS_PER_PAGE, page * TOPICS_PER_PAGE).map((topic) => (
@@ -65,11 +74,13 @@ export default function TopicsList(props: {onLoadingComplete: () => void}) {
                     }
                 </Grid>
             </Box>
+            </Fade>
             
             <Box sx={{ mt: "auto", display: "flex", justifyContent: "center" }}>
                 <Pagination count={Math.ceil(topics.length / TOPICS_PER_PAGE)} page={page} onChange={(_event, value) => handlePageChange(value)} />
             </Box>
-
+            
+            
         </Box>
     );
 }

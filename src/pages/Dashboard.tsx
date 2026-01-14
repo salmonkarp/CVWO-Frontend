@@ -1,9 +1,8 @@
-import { Backdrop, CircularProgress, Container, Fab, Toolbar, Typography } from '@mui/material';
+import { Container, Fab, Toolbar, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import NavBar from '../components/NavBar';
 import TopicsList from '../components/TopicsList';
 import { useNavigate } from 'react-router';
-import { useState } from 'react';
 
 export interface DashboardProps {
   onLogout: () => void;
@@ -12,7 +11,6 @@ export interface DashboardProps {
 
 export default function Dashboard(props: DashboardProps) {
   const { onLogout, username } = props;
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   
   return (
@@ -27,18 +25,18 @@ export default function Dashboard(props: DashboardProps) {
           gap: 2
         }}
       >
-        <Backdrop
+        {/* <Backdrop
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
           open={isLoading}
         >
           <CircularProgress color="inherit" />
-        </Backdrop>
+        </Backdrop> */}
         <Toolbar />
         <Typography variant="h5">Welcome to Qrator, {username}.</Typography>
         <Typography variant="body1">
           Start the discussion now.
         </Typography>
-        <TopicsList onLoadingComplete={async () => {await new Promise(resolve => setTimeout(resolve, 200)); setIsLoading(false)}}></TopicsList>
+        <TopicsList></TopicsList>
         {username == "admin" && ( //TODO: Superficial, add verification on backend later
         <Fab color="secondary" aria-label="Add topic" size="large" onClick={() => navigate("/addtopic")}
           sx={

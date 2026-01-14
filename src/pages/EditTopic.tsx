@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Card,
+  CardMedia,
   Container,
   IconButton,
   Paper,
@@ -11,8 +13,8 @@ import {
 } from "@mui/material";
 import NavBar from "../components/NavBar";
 import type { DashboardProps } from "./Dashboard";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { ArrowBack } from "@mui/icons-material";
 
@@ -30,15 +32,46 @@ const VisuallyHiddenInput = styled('input')({
 
 const maxFileSizeInBytes = 2 * 1024 * 1024;
 
-export default function AddTopic(props: DashboardProps) {
-  const { onLogout } = props;
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const navigate = useNavigate();
+export default function EditTopic(props: DashboardProps) {
+    const { onLogout } = props;
+    const params = useParams<{topic: string}>();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
+    const [imageUpdatedAt, setImageUpdatedAt] = useState(0);
+    const [file, setFile] = useState<File | null>(null);
+    const navigate = useNavigate();
+
+    const fetchTopicDetails = async () => {
+        try {
+            const stored = localStorage.getItem("token");
+            const token = stored ? JSON.parse(stored).token : null;
+            const response = await fetch(import.meta.env.VITE_BACKEND_API_URL + `/topics/${params.topic}`, {
+                method: 'GET',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.text();
+            if (response.ok) {
+                const parsedData = JSON.parse(data);
+                setName(parsedData.name);
+                setDescription(parsedData.description);
+                setImageUrl(parsedData.imageUrl);
+                setImageUpdatedAt(parsedData.imageUpdatedAt);
+            } else {
+                console.error("Error fetching topic details:", data);
+            }
+        } catch (error) {
+            console.error("Error fetching topic details:", error);
+        } finally {
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+    };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsError(false);
@@ -82,7 +115,7 @@ export default function AddTopic(props: DashboardProps) {
     }
     try {
       const response = await fetch(
-        import.meta.env.VITE_BACKEND_API_URL + "/addtopic",
+        import.meta.env.VITE_BACKEND_API_URL + "/edittopic",
         {
           method: "POST",
           headers: {
@@ -96,7 +129,7 @@ export default function AddTopic(props: DashboardProps) {
       );
       const data = await response.text();
       if (response.ok) {
-        navigate("/topics");
+        navigate("/t/" + name);
       } else {
         setIsError(true);
         setErrorMessage(
@@ -110,6 +143,10 @@ export default function AddTopic(props: DashboardProps) {
       setIsSubmitting(false);
     }
   };
+
+    useEffect(() => {
+          fetchTopicDetails();
+    }, [params]);
 
   return (
     <Container sx={{ display: "flex", minHeight: "100vh" }}>
@@ -133,7 +170,7 @@ export default function AddTopic(props: DashboardProps) {
               flexDirection: "column",
               gap: 2,
               width: {
-                  sm: "80%",
+                  xs: "80%",
                   md: 400
               },
               margin: "0 auto",
@@ -145,7 +182,7 @@ export default function AddTopic(props: DashboardProps) {
                 </IconButton>
             </Box>
             <Typography variant="h5" align="left" sx={{mt: 3}}>
-              Add a new topic
+              Edit t/{params.topic}
             </Typography>
             <TextField
               key="name"
@@ -153,6 +190,7 @@ export default function AddTopic(props: DashboardProps) {
               variant="outlined"
               value={name}
               onChange={(e) => {setName(e.target.value); setIsError(false); setErrorMessage("");}}
+              disabled
               required
             ></TextField>
             <TextField
@@ -164,6 +202,21 @@ export default function AddTopic(props: DashboardProps) {
               value={description}
               onChange={(e) => {setDescription(e.target.value); setIsError(false); setErrorMessage("");}}
             ></TextField>
+            
+            {
+                !file && imageUrl && (
+                    <>
+                    <Typography variant="overline" sx={{mb: -2}}>Uploaded image:</Typography>
+                    <Card>
+                        <CardMedia 
+                        image={import.meta.env.VITE_BACKEND_API_URL + imageUrl + `?v=${imageUpdatedAt || Date.now()}`}
+                        sx={{height: 140}}
+                        />  
+                    </Card>
+                    </>
+                )
+            }
+            
 
             <Button
               component="label"
@@ -173,7 +226,7 @@ export default function AddTopic(props: DashboardProps) {
               startIcon={<CloudUploadIcon />}
               sx={{mt:2}}
             >
-              Upload Image
+              Upload a Different Image
               <VisuallyHiddenInput
                 type="file"
                 onChange={handleFileChange}
@@ -192,7 +245,7 @@ export default function AddTopic(props: DashboardProps) {
               variant="contained"
               type="submit"
               fullWidth
-              sx={{ mt: 2 }}
+              sx={{ mt: 1 }}
               loading={isSubmitting}
             >
               Submit
