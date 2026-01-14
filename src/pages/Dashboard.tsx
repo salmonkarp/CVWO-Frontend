@@ -38,8 +38,8 @@ export default function Dashboard(props: DashboardProps) {
         <Typography variant="body1">
           Start the discussion now.
         </Typography>
-        <TopicsList onLoadingComplete={() => setIsLoading(false)}></TopicsList>
-        {username == "admin" && ( //TOOD: Superficial, add verification on backend later
+        <TopicsList onLoadingComplete={async () => {await new Promise(resolve => setTimeout(resolve, 200)); setIsLoading(false)}}></TopicsList>
+        {username == "admin" && ( //TODO: Superficial, add verification on backend later
         <Fab color="secondary" aria-label="Add topic" size="large" onClick={() => navigate("/addtopic")}
           sx={
               {

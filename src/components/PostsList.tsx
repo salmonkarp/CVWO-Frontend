@@ -4,7 +4,7 @@ import PostCard from "./PostCard";
 
 const POSTS_PER_PAGE = 10;
 
-export default function PostsList(props: {topic: string; onLoadingComplete?: () => void}) {
+export default function PostsList(props: {topic: string; onLoadingComplete?: () => void; ownUsername: string}) {
 
     const [posts, setPosts] = useState<Array<any>>([]);
     const [page, setPage] = useState(1);
@@ -51,7 +51,7 @@ export default function PostsList(props: {topic: string; onLoadingComplete?: () 
         }}>
             <Box sx={{ flexGrow: 1, width: "100%" }}>
                 {posts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE).map((post) => (
-                    <PostCard post={post}></PostCard>
+                    <PostCard post={post} ownUsername={props.ownUsername}></PostCard>
                 ))}
                 {
                     posts.length === 0 && (

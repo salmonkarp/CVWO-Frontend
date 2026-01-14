@@ -15,7 +15,7 @@ import type { DashboardProps } from "./Dashboard";
 import { ArrowBack } from "@mui/icons-material";
 
 export default function AddTopic(props: DashboardProps) {
-  const { onLogout } = props;
+  const { username, onLogout } = props;
   const topic = useParams<{topic: string}>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -28,8 +28,9 @@ export default function AddTopic(props: DashboardProps) {
     e.preventDefault();
     setIsSubmitting(true);
     const payload = {
-        name: title,
-        description: body,
+        title: title,
+        body: body,
+        topic: topic.topic,
     }
     try {
       const response = await fetch(
@@ -47,7 +48,7 @@ export default function AddTopic(props: DashboardProps) {
       );
       const data = await response.text();
       if (response.ok) {
-        navigate("/topics");
+        navigate("/t/" + topic.topic);
       } else {
         setIsError(true);
         setErrorMessage(
@@ -85,8 +86,8 @@ export default function AddTopic(props: DashboardProps) {
               flexDirection: "column",
               gap: 2,
               width: {
-                  xs: "80%",
-                  sm: 300
+                  sm: "80%",
+                  md: 400
               },
               margin: "0 auto",
             }}
@@ -96,13 +97,13 @@ export default function AddTopic(props: DashboardProps) {
                 <ArrowBack />
                 </IconButton>
             </Box>
-            <Typography variant="h5" align="center" sx={{mt: 2}}>
-              Add a new post to t/{topic.topic}
+            <Typography variant="h6" align="left" sx={{mt: 3}}>
+              Add a new post to <Box fontWeight={700} display="inline">t/{topic.topic}</Box>
             </Typography>
             <TextField
                 key="title"
                 label="Title"
-                variant="standard"
+                variant="outlined"
                 value={title}
                 onChange={(e) => {setTitle(e.target.value); setIsError(false); setErrorMessage("");}}
                 required
@@ -110,11 +111,11 @@ export default function AddTopic(props: DashboardProps) {
             <TextField
                 key="body"
                 label="Body"
-                variant="standard"
+                variant="outlined"
                 multiline
+                rows = {4}
                 value={body}
                 onChange={(e) => {setBody(e.target.value); setIsError(false); setErrorMessage("");}}
-                required
             ></TextField>
 
             {isError && (

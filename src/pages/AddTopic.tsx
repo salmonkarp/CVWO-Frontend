@@ -135,8 +135,8 @@ export default function AddTopic(props: DashboardProps) {
               flexDirection: "column",
               gap: 2,
               width: {
-                  xs: "80%",
-                  sm: 300
+                  sm: "80%",
+                  md: 400
               },
               margin: "0 auto",
             }}
@@ -146,13 +146,13 @@ export default function AddTopic(props: DashboardProps) {
                 <ArrowBack />
                 </IconButton>
             </Box>
-            <Typography variant="h5" align="center">
+            <Typography variant="h5" align="left" sx={{mt: 3}}>
               Add a new topic
             </Typography>
             <TextField
               key="name"
               label="Name"
-              variant="standard"
+              variant="outlined"
               value={name}
               onChange={(e) => {setName(e.target.value); setIsError(false); setErrorMessage("");}}
               required
@@ -160,8 +160,9 @@ export default function AddTopic(props: DashboardProps) {
             <TextField
               key="description"
               label="Description (optional)"
-              variant="standard"
+              variant="outlined"
               multiline
+              rows={4}
               value={description}
               onChange={(e) => {setDescription(e.target.value); setIsError(false); setErrorMessage("");}}
             ></TextField>

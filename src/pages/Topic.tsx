@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardContent, CardMedia, Container, Fab, IconButton, Toolbar, Typography } from "@mui/material";
+import { Backdrop, Box, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, Container, Fab, IconButton, Toolbar, Typography } from "@mui/material";
 import NavBar from "../components/NavBar";
 import { useNavigate, useParams } from "react-router";
 import { ArrowBack } from "@mui/icons-material";
@@ -7,10 +7,10 @@ import PostsList from "../components/PostsList";
 import AddIcon from '@mui/icons-material/Add';
 
 export default function Topic(props: {username: string; onLogout: () => void}) {
-    const { onLogout } = props;
+    const { username, onLogout } = props;
     const { topic } = useParams<{topic: string}>();
     const navigate = useNavigate();
-
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [topicDetails, setTopicDetails] = useState<any>(null);
     const fetchTopicDetails = async () => {
         try {
@@ -33,7 +33,11 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
             }
         } catch (error) {
             console.error("Error fetching topic details:", error);
+        } finally {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            setIsLoading(false);
         }
+        
     };
 
     useEffect(() => {
@@ -42,6 +46,7 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
 
     return (
         <Container sx={{display:'flex', minHeight: '100vh'}}>
+            
             <NavBar onLogout={onLogout} window={window} />
             <Box
                 sx={{
@@ -52,6 +57,12 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                 gap: 2
                 }}
             >
+                <Backdrop
+                    sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                    open={isLoading}
+                    >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
                 <Toolbar />
                 <Box sx={{ height: 20, mb: 2, ml: -1 }}>
                     <IconButton onClick={() => navigate('/dashboard')}>
@@ -66,7 +77,7 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                             title={topicDetails?.name}
                         />
                         <CardContent>
-                            <Typography variant="h5">t/{topicDetails?.name}</Typography>
+                            <Typography variant="h5" fontWeight={700}>t/{topicDetails?.name}</Typography>
                             <Typography variant="body1">{topicDetails?.description}</Typography>
                         </CardContent>
                         <CardActions sx={{display: 'flex', justifyContent: 'flex-end'}}>
@@ -76,7 +87,7 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                     </Card>
                 )}
                 <Typography variant="h6">Most Recent Posts</Typography>
-                <PostsList topic={topic || ''}></PostsList>
+                <PostsList topic={topic || ''} ownUsername={username}></PostsList>
                 <Fab color="secondary" aria-label="Add post" size="large" onClick={() => navigate("/t/" + topic + "/create")}
                     sx={
                         {

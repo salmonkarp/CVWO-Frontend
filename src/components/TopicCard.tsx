@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 
 export default function TopicCard(props: {topic: any}) {
     const { topic } = props;
-    console.log(topic);
     const navigate = useNavigate();
     return (
         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={topic.id} sx={{
