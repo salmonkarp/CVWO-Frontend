@@ -86,7 +86,7 @@ export default function AddTopic(props: DashboardProps) {
               flexDirection: "column",
               gap: 2,
               width: {
-                  sm: "80%",
+                  xs: "80%",
                   md: 400
               },
               margin: "0 auto",

@@ -1,6 +1,7 @@
 import { Box, Fade, Grid, Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import TopicCard from "./TopicCard";
+import { fetchTopics } from "../helpers/Fetchers";
 
 const TOPICS_PER_PAGE = 6;
 
@@ -16,40 +17,16 @@ export default function TopicsList() {
         return () => clearTimeout(id);
     }, [page, isLoading]);
 
-    const fetchTopics = async () => {
-        try {
-            const stored = localStorage.getItem("token");
-            const token = stored ? JSON.parse(stored).token : null;
-            const response = await fetch(import.meta.env.VITE_BACKEND_API_URL + '/topics', {
-                method: 'GET',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const data = await response.text();
-            if (response.ok) {
-                const topicsData = JSON.parse(data);
-                const sortedTopics = topicsData.sort((a: any, b: any) => a.name.localeCompare(b.name));
-                // TODO: Add sorting function later
-                setTopics(sortedTopics);
-            } else {
-                console.error("Error fetching topics:", data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch topics:", error);
-        } finally {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            setIsLoading(false);
-        }
-    };
-
+    
     const handlePageChange = (value: number) => {
         setPage(value);
     }
 
     useEffect(() => {
-        fetchTopics();
+        const loadData = async () => {
+            setTopics(await fetchTopics());
+        }
+        loadData().then(() => setIsLoading(false));
     }, []);
 
     return (

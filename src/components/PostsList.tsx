@@ -1,46 +1,25 @@
 import { Box, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import PostCard from "./PostCard";
+import { fetchPosts } from "../helpers/Fetchers";
 
 const POSTS_PER_PAGE = 10;
 
-export default function PostsList(props: {topic: string; onLoadingComplete?: () => void; ownUsername: string}) {
-
+export default function PostsList(props: {topic: string; ownUsername: string}) {
+    const topic = props.topic;
     const [posts, setPosts] = useState<Array<any>>([]);
     const [page, setPage] = useState(1);
-
-    const fetchPosts = async () => {
-        try {
-            const stored = localStorage.getItem("token");
-            const token = stored ? JSON.parse(stored).token : null;
-            const response = await fetch(import.meta.env.VITE_BACKEND_API_URL + '/topics/' + props.topic + '/posts', {
-                method: 'GET',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const data = await response.text();
-            if (response.ok) {
-                const postsData = JSON.parse(data);
-                setPosts(postsData);
-            } else {
-                console.error("Error fetching posts:", data);
-            }
-            props.onLoadingComplete?.();
-        } catch (error) {
-            console.error("Failed to fetch posts:", error);
-            props.onLoadingComplete?.();
-        }
-    };
 
     const handlePageChange = (value: number) => {
         setPage(value);
     }
 
     useEffect(() => {
-        fetchPosts();
-    }, []);
+        const loadData = async () => {
+            setPosts(await fetchPosts(topic || ''));
+        }
+        loadData();
+    }, [topic]);
 
     return (
         <Box sx={{

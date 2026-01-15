@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { ArrowBack } from "@mui/icons-material";
+import { fetchTopic } from "../helpers/Fetchers";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -44,34 +45,6 @@ export default function EditTopic(props: DashboardProps) {
     const [imageUpdatedAt, setImageUpdatedAt] = useState(0);
     const [file, setFile] = useState<File | null>(null);
     const navigate = useNavigate();
-
-    const fetchTopicDetails = async () => {
-        try {
-            const stored = localStorage.getItem("token");
-            const token = stored ? JSON.parse(stored).token : null;
-            const response = await fetch(import.meta.env.VITE_BACKEND_API_URL + `/topics/${params.topic}`, {
-                method: 'GET',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const data = await response.text();
-            if (response.ok) {
-                const parsedData = JSON.parse(data);
-                setName(parsedData.name);
-                setDescription(parsedData.description);
-                setImageUrl(parsedData.imageUrl);
-                setImageUpdatedAt(parsedData.imageUpdatedAt);
-            } else {
-                console.error("Error fetching topic details:", data);
-            }
-        } catch (error) {
-            console.error("Error fetching topic details:", error);
-        } finally {
-            await new Promise(resolve => setTimeout(resolve, 200));
-        }
-    };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsError(false);
@@ -144,9 +117,16 @@ export default function EditTopic(props: DashboardProps) {
     }
   };
 
-    useEffect(() => {
-          fetchTopicDetails();
-    }, [params]);
+  useEffect(() => {
+    const loadData = async () => {
+      const topicData = await fetchTopic(params.topic || '');
+      setName(topicData.name);
+      setDescription(topicData.description);
+      setImageUrl(topicData.imageUrl);
+      setImageUpdatedAt(topicData.imageUpdatedAt);
+    }
+    loadData();
+  }, [params]);
 
   return (
     <Container sx={{ display: "flex", minHeight: "100vh" }}>

@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import type { DashboardProps } from "./Dashboard";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useEffect, useState } from "react";
-import { fetchUser } from "../helpers/fetchers";
+import { fetchUser } from "../helpers/Fetchers";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -42,14 +42,11 @@ export default function Account(props: DashboardProps) {
         setIsSubmitting(true);
         setIsError(false);
         setErrorMessage("");
-
-        
     }
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsError(false);
         setErrorMessage("");
-        // TODO: Enforce file size limit on backend as well
         if (e.target.files && e.target.files.length > 0) {
         const selectedFile = e.target.files[0];
         if (selectedFile.size > maxFileSizeInBytes) {
