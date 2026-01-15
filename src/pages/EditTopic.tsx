@@ -157,7 +157,7 @@ export default function EditTopic(props: DashboardProps) {
             }}
           >
             <Box sx={{ height: 20, position: 'absolute', ml: -3, mt: -3}}>
-                <IconButton onClick={() => navigate('/dashboard')}>
+                <IconButton onClick={() => navigate('/t/' + params.topic)}>
                 <ArrowBack />
                 </IconButton>
             </Box>

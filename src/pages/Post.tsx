@@ -1,10 +1,12 @@
-import { Container, Fade, Box, Toolbar, Button, Card, CardActions, CardContent, CardMedia, IconButton, Typography, Avatar, Skeleton } from "@mui/material";
+import { Container, Fade, Box, Toolbar, Button, Card, CardActions, CardContent, CardMedia, IconButton, Typography, Avatar, Skeleton, Fab } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { ArrowBack } from "@mui/icons-material";
 import { getTimeElapsed } from "../helpers/Helpers";
+import ReplyIcon from '@mui/icons-material/Reply';
 import { fetchPost, fetchTopic, fetchUser } from "../helpers/Fetchers";
+import CommentsList from "../components/CommentsList";
 
 export default function Topic(props: {username: string; onLogout: () => void}) {
     const { username, onLogout } = props;
@@ -24,14 +26,17 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
             setPostUsername(userData.username);
         if (userData.imageUrl)
             setPostImage(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
+        
     }
 
     useEffect(() => {
         const loadData = async () => {
-            setTopicDetails(await fetchTopic(topic || ''));
-            setPostDetails(await fetchPost(postId || ''));
-            if (postDetails) {
-                await loadUserData(postDetails);
+            const topicData = await fetchTopic(topic || '');
+            setTopicDetails(topicData);
+            const postData = await fetchPost(postId || '');
+            setPostDetails(postData);
+            if (postData) {
+                await loadUserData(postData);
             }
             setIsLoading(false);
             setHasLoaded(true);
@@ -45,7 +50,10 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
             <Fade in={!isLoading} timeout={500}>
             <Box
                 sx={{
-                p: 4,
+                p: {
+                    md: 4,
+                    xs: 2
+                },
                 display: 'flex',
                 flexDirection: 'column',
                 flexGrow: 1,
@@ -58,14 +66,9 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                     <ArrowBack />
                     </IconButton>
                 </Box>
-                <Card>
-                    <CardMedia 
-                        sx={{ height: 140 }}
-                        image={topicDetails?.imageUrl ? import.meta.env.VITE_BACKEND_API_URL + topicDetails.imageUrl + `?v=${topicDetails.imageUpdatedAt || Date.now()}` : "https://placehold.net/9.png"}
-                        title={topicDetails?.name}
-                    />
+                <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
                     { !hasLoaded ? (
-                    <CardContent>
+                    <CardContent sx={{ flex: 1 }}>
                     <Box
                         sx={{
                         display: "flex",
@@ -82,7 +85,7 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                     <Skeleton variant="text" width="80%" height={20} />
                     </CardContent>
                     ) : (
-                    <CardContent>
+                    <CardContent sx={{ flex: 1 }}>
                         <Box
                             sx={{
                             display: "flex",
@@ -102,7 +105,7 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                             >
                             {postUsername ? postUsername[0].toLocaleLowerCase() : ""}
                             </Avatar>
-                            <Typography variant="subtitle2" color="text.secondary">
+                            <Typography variant="subtitle1" color="text.secondary">
                             Posted by u/{postUsername} in t/{topic} -{" "}
                             {getTimeElapsed(postDetails.created_at)}
                             </Typography>
@@ -111,7 +114,23 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
                         <Typography variant="body1">{postDetails?.body}</Typography>
                     </CardContent>
                     )}
+                    <CardMedia 
+                        sx={{ width: { xs: '100%', md: 200 }, height: { xs: 'auto', md: 140 }, flexShrink: 0, minHeight: { xs: 200, md: 140 } }}
+                        image={topicDetails?.imageUrl ? import.meta.env.VITE_BACKEND_API_URL + topicDetails.imageUrl + `?v=${topicDetails.imageUpdatedAt || Date.now()}` : "https://placehold.net/9.png"}
+                        title={topicDetails?.name}
+                    />
                 </Card>
+                <Typography variant="h6">Replies</Typography>
+                <CommentsList topic={topic || ''} ownUsername={username} postId={postId || ''}></CommentsList>
+                <Fab color="secondary" aria-label="Reply" size="large" onClick={() => navigate("/t/" + topic + "/p/" + postId + "/reply")}
+                sx={
+                    {
+                    position: "fixed",
+                    bottom: 32,
+                    right: 32
+                }}>
+                    <ReplyIcon></ReplyIcon>
+                </Fab>
             </Box>
             </Fade>
         </Container>

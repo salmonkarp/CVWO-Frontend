@@ -27,19 +27,16 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
             <Fade in={!isLoading} timeout={500}>
             <Box
                 sx={{
-                p: 4,
+                p: {
+                    md: 4,
+                    xs: 2
+                },
                 display: 'flex',
                 flexDirection: 'column',
                 flexGrow: 1,
                 gap: 2
                 }}
             >
-                {/* <Backdrop
-                    sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-                    open={isLoading}
-                    >
-                    <CircularProgress color="inherit" />
-                </Backdrop> */}
                 <Toolbar />
                 <Box sx={{ height: 20, mb: 2, ml: -1 }}>
                     <IconButton onClick={() => navigate('/dashboard')}>

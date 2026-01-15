@@ -13,23 +13,23 @@ import { fetchUser } from "../helpers/Fetchers";
 import { getTimeElapsed } from "../helpers/Helpers";
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function PostCard(props: { post: any; ownUsername: string }) {
-  const { ownUsername, post } = props;
+export default function CommentCard(props: { comment: any; ownUsername: string }) {
+  const { ownUsername, comment } = props;
   const { topic } = useParams<{ topic: string }>();
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
-  const [postUsername, setPostUsername] = useState<string>("");
-  const [postImage, setPostImage] = useState<string>("");
+  const [commentUsername, setCommentUsername] = useState<string>("");
+  const [commentImage, setCommentImage] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadUserData = async () => {
     //   await new Promise(resolve => setTimeout(resolve, 500));
-      const userData = await fetchUser(post.creator || "");
+      const userData = await fetchUser(comment.creator || "");
       if (userData) {
-        setPostUsername(userData.username);
+        setCommentUsername(userData.username);
       }
       if (userData.imageUrl) {
-        setPostImage(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
+        setCommentImage(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
       }
       setHasLoaded(true);
     };
@@ -67,30 +67,30 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
             }}
           >
             <Avatar
-              src={postImage}
+              src={commentImage}
               sx={{
                 width: 32,
                 height: 32,
                 backgroundColor: "primary.main",
               }}
             >
-              {postUsername ? postUsername[0].toLocaleLowerCase() : ""}
+              {commentUsername ? commentUsername[0].toLocaleLowerCase() : ""}
             </Avatar>
             <Typography variant="subtitle1" color="text.secondary">
-              Posted by u/{postUsername} in t/{post.topic} -{" "}
-              {getTimeElapsed(post.created_at)}
+              u/{commentUsername} -{" "}
+              {getTimeElapsed(comment.created_at)}
             </Typography>
           </Box>
-          <Typography variant="h6">{post.title}</Typography>
-          <Typography variant="body1">{post.body}</Typography>
+          <Typography variant="h6">{comment.title}</Typography>
+          <Typography variant="body1">{comment.body}</Typography>
         </CardContent>
       )}
-      <CardActions sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button onClick={() => navigate("/t/" + topic + "/p/" + post.id)}>
+      {/* <CardActions sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button onClick={() => navigate("/t/" + topic + "/p/" + comment.id)}>
           View
         </Button>
         <Button>Reply</Button>
-      </CardActions>
+      </CardActions> */}
     </Card>
   );
 }
