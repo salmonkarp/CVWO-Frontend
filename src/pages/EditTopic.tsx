@@ -133,7 +133,10 @@ export default function EditTopic(props: DashboardProps) {
       <NavBar onLogout={onLogout} window={window} />
       <Container
         sx={{
-          p: 4,
+          p: {
+              md: 4,
+              xs: 2
+          },
           display: "flex",
           flexDirection: "column",
           alignContent: "center",
