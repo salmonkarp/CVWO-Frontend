@@ -5,6 +5,7 @@ import { ArrowBack } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import PostsList from "../components/PostsList";
 import AddIcon from '@mui/icons-material/Add';
+import { fetchTopic } from "../helpers/Fetchers";
 
 export default function Topic(props: {username: string; onLogout: () => void}) {
     const { username, onLogout } = props;
@@ -12,35 +13,12 @@ export default function Topic(props: {username: string; onLogout: () => void}) {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [topicDetails, setTopicDetails] = useState<any>(null);
-    const fetchTopicDetails = async () => {
-        try {
-            const stored = localStorage.getItem("token");
-            const token = stored ? JSON.parse(stored).token : null;
-            const response = await fetch(import.meta.env.VITE_BACKEND_API_URL + `/topics/${topic}`, {
-                method: 'GET',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const data = await response.text();
-            if (response.ok) {
-                const parsedData = JSON.parse(data);
-                setTopicDetails(parsedData);
-                console.log("Fetched topic details:", topicDetails);
-            } else {
-                console.error("Error fetching topic details:", data);
-            }
-        } catch (error) {
-            console.error("Error fetching topic details:", error);
-        } finally {
-            setIsLoading(false);
-        }
-        
-    };
 
     useEffect(() => {
-        fetchTopicDetails();
+        const loadData = async () => {
+            setTopicDetails(await fetchTopic(topic || ''));
+        }
+        loadData().then(() => setIsLoading(false));
     }, [topic]);
 
     return (

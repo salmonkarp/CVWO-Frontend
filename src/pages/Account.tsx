@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import type { DashboardProps } from "./Dashboard";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useEffect, useState } from "react";
-import { fetchUserData } from "../helpers/fetchers";
+import { fetchUser } from "../helpers/fetchers";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -29,7 +29,7 @@ export default function Account(props: DashboardProps) {
 
     useEffect(() => {
         const loadUserData = async () => {
-            const userData = await fetchUserData(username || '');
+            const userData = await fetchUser(username || '');
             if (userData.imageUrl) {
                 setFile(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
             }

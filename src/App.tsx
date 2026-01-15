@@ -9,6 +9,7 @@ import Topic from "./pages/Topic";
 import Account from "./pages/Account";
 import AddPost from "./pages/AddPost";
 import EditTopic from "./pages/EditTopic";
+import Post from "./pages/Post";
 
 const theme = createTheme({
   palette: {
@@ -16,7 +17,7 @@ const theme = createTheme({
       main: "#512da8",
     },
     secondary: {
-      main: '#ec407a',
+      main: "#ec407a",
     },
   },
 });
@@ -48,86 +49,100 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <Routes>
-      <Route
-        path="/"
-        element={<Navigate to={isLoggedIn ? "/dashboard" : "/home"} replace />}
-      />
-      <Route path="/home" element={<Home />} />
-      <Route
-        path="/login"
-        element={
-          isLoggedIn
-            ? <Navigate to="/dashboard" replace />
-            : <Login onLoginSuccess={(token, username) => handleLogin(token, username)} />
-        }
-      />
-      <Route
-        path="/dashboard"
-        element={
-          isLoggedIn ? (
-            <Dashboard username={username || ""} onLogout={handleLogout} />
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
-      />
-      <Route
-        path="/addtopic"
-        element={
-          isLoggedIn ? (
-            <AddTopic username={username || ""} onLogout={handleLogout} />
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
-      />
-      <Route
-        path="/t/:topic"
-        element={
-          isLoggedIn ? (
-            <Topic username={username || ""} onLogout={handleLogout} />
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
-      />
-      <Route
-        path="/t/:topic/create"
-        element={
-          isLoggedIn ? (
-            <AddPost username={username || ""} onLogout={handleLogout} />
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
-      />
-      <Route
-        path="/t/:topic/edit"
-        element={
-          isLoggedIn ? (
-            <EditTopic username={username || ""} onLogout={handleLogout} />
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
-      />
-      <Route
-        path="/account"
-        element={
-          isLoggedIn ? (
-            <Account username={username || ""} onLogout={handleLogout} />
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
-      />
-      <Route
-        path="*"
-        element={<Navigate to="/" replace />}
-      />
-    </Routes>
+        <Route
+          path="/"
+          element={
+            <Navigate to={isLoggedIn ? "/dashboard" : "/home"} replace />
+          }
+        />
+        <Route path="/home" element={<Home />} />
+        <Route
+          path="/login"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Login
+                onLoginSuccess={(token, username) =>
+                  handleLogin(token, username)
+                }
+              />
+            )
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            isLoggedIn ? (
+              <Dashboard username={username || ""} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/addtopic"
+          element={
+            isLoggedIn ? (
+              <AddTopic username={username || ""} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/t/:topic"
+          element={
+            isLoggedIn ? (
+              <Topic username={username || ""} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/t/:topic/create"
+          element={
+            isLoggedIn ? (
+              <AddPost username={username || ""} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/t/:topic/edit"
+          element={
+            isLoggedIn ? (
+              <EditTopic username={username || ""} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/t/:topic/p/:postId"
+          element={
+            isLoggedIn ? (
+              <Post username={username || ""} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            isLoggedIn ? (
+              <Account username={username || ""} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </ThemeProvider>
-    
   );
 };
 
