@@ -149,7 +149,7 @@ export default function CommentCard(props: {
             }}
           >
             <Avatar
-              src={commentImage + `?v=${commentImageUpdatedAt || Date.now()}`}
+              src={commentImage ? commentImage + `?v=${commentImageUpdatedAt || Date.now()}` : ""}
               sx={{
                 width: 32,
                 height: 32,

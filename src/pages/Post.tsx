@@ -183,7 +183,7 @@ export default function Topic(props: {
                   }}
                 >
                   <Avatar
-                    src={postImage + `?v=${postImageUpdatedAt || Date.now()}`}
+                    src={postImage ? postImage + `?v=${postImageUpdatedAt || Date.now()}` : ""}
                     sx={{
                       width: 32,
                       height: 32,

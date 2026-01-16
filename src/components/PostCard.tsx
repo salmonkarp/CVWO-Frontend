@@ -85,7 +85,7 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
               }}
             >
               <Avatar
-                src={postImage + `?v=${postImageUpdatedAt || Date.now()}`}
+                src={postImage ? postImage + `?v=${postImageUpdatedAt || Date.now()}` : ""}
                 sx={{
                   width: 32,
                   height: 32,
