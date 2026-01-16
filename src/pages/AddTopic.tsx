@@ -13,18 +13,18 @@ import NavBar from "../components/NavBar";
 import type { DashboardProps } from "./Dashboard";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { ArrowBack } from "@mui/icons-material";
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
   height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
+  overflow: "hidden",
+  position: "absolute",
   bottom: 0,
   left: 0,
-  whiteSpace: 'nowrap',
+  whiteSpace: "nowrap",
   width: 1,
 });
 
@@ -58,12 +58,12 @@ export default function AddTopic(props: DashboardProps) {
     e.preventDefault();
     setIsSubmitting(true);
     var payload;
-    if (file== null) {
+    if (file == null) {
       payload = {
         name,
         description,
         image: null,
-      }
+      };
     } else {
       const base64Image = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
@@ -78,7 +78,7 @@ export default function AddTopic(props: DashboardProps) {
         name,
         description,
         image: base64Image || null,
-      }
+      };
     }
     try {
       const response = await fetch(
@@ -117,8 +117,8 @@ export default function AddTopic(props: DashboardProps) {
       <Container
         sx={{
           p: {
-              md: 4,
-              xs: 2
+            md: 4,
+            xs: 2,
           },
           display: "flex",
           flexDirection: "column",
@@ -136,18 +136,18 @@ export default function AddTopic(props: DashboardProps) {
               flexDirection: "column",
               gap: 2,
               width: {
-                  xs: "80%",
-                  md: 400
+                xs: "80%",
+                md: 400,
               },
               margin: "0 auto",
             }}
           >
-            <Box sx={{ height: 20, position: 'absolute', ml: -3, mt: -3}}>
-                <IconButton onClick={() => navigate('/dashboard')}>
+            <Box sx={{ height: 20, position: "absolute", ml: -3, mt: -3 }}>
+              <IconButton onClick={() => navigate("/dashboard")}>
                 <ArrowBack />
-                </IconButton>
+              </IconButton>
             </Box>
-            <Typography variant="h5" align="left" sx={{mt: 3}}>
+            <Typography variant="h5" align="left" sx={{ mt: 3 }}>
               Add a new topic
             </Typography>
             <TextField
@@ -155,7 +155,11 @@ export default function AddTopic(props: DashboardProps) {
               label="Name"
               variant="outlined"
               value={name}
-              onChange={(e) => {setName(e.target.value); setIsError(false); setErrorMessage("");}}
+              onChange={(e) => {
+                setName(e.target.value);
+                setIsError(false);
+                setErrorMessage("");
+              }}
               required
             ></TextField>
             <TextField
@@ -165,7 +169,11 @@ export default function AddTopic(props: DashboardProps) {
               multiline
               rows={4}
               value={description}
-              onChange={(e) => {setDescription(e.target.value); setIsError(false); setErrorMessage("");}}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                setIsError(false);
+                setErrorMessage("");
+              }}
             ></TextField>
 
             <Button
@@ -174,7 +182,7 @@ export default function AddTopic(props: DashboardProps) {
               variant="contained"
               tabIndex={-1}
               startIcon={<CloudUploadIcon />}
-              sx={{mt:2}}
+              sx={{ mt: 2 }}
             >
               Upload Image
               <VisuallyHiddenInput
@@ -183,7 +191,11 @@ export default function AddTopic(props: DashboardProps) {
                 multiple
               />
             </Button>
-            {file && <Typography variant="body2">Selected file: {file.name}</Typography>}
+            {file && (
+              <Typography variant="body2">
+                Selected file: {file.name}
+              </Typography>
+            )}
 
             {isError && (
               <Typography variant="body2" color="error">

@@ -15,7 +15,7 @@ import type { DashboardProps } from "./Dashboard";
 import { ArrowBack } from "@mui/icons-material";
 
 export default function AddTopic(props: DashboardProps) {
-  const { username, onLogout } = props;
+  const { onLogout } = props;
   const topic = useParams<{topic: string}>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState(false);

@@ -1,9 +1,7 @@
 import {
   Avatar,
   Box,
-  Button,
   Card,
-  CardActions,
   CardContent,
   Skeleton,
   Typography,
@@ -11,7 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { fetchUser } from "../helpers/Fetchers";
 import { getTimeElapsed } from "../helpers/Helpers";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export default function CommentCard(props: { comment: any; ownUsername: string }) {
   const { ownUsername, comment } = props;
@@ -19,7 +17,6 @@ export default function CommentCard(props: { comment: any; ownUsername: string }
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
   const [commentUsername, setCommentUsername] = useState<string>("");
   const [commentImage, setCommentImage] = useState<string>("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -37,7 +34,7 @@ export default function CommentCard(props: { comment: any; ownUsername: string }
   }, []);
 
   return (
-    <Card sx={{ flexGrow: 1, mb: 3 }}>
+    <Card sx={{ flexGrow: 1, mb: 3, display: "flex", flexDirection: "column" }}>
       {!hasLoaded ? (
         <CardContent>
           <Box

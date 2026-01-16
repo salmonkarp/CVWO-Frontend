@@ -5,6 +5,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  Grid,
   Skeleton,
   Typography,
 } from "@mui/material";
@@ -14,7 +15,7 @@ import { getTimeElapsed } from "../helpers/Helpers";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function PostCard(props: { post: any; ownUsername: string }) {
-  const { ownUsername, post } = props;
+  const { post } = props;
   const { topic } = useParams<{ topic: string }>();
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
   const [postUsername, setPostUsername] = useState<string>("");
@@ -37,7 +38,14 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
   }, []);
 
   return (
-    <Card sx={{ flexGrow: 1, mb: 3 }}>
+    <Grid
+      size={{ xs: 12, sm: 6 }}
+      key={post?.id}
+      sx={{
+        display: "flex",
+      }}
+    >
+    <Card sx={{ flexGrow: 1, mb: 3, display: "flex", flexDirection: "column" }}>
       {!hasLoaded ? (
         <CardContent>
           <Box
@@ -85,12 +93,13 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
           <Typography variant="body1">{post.body}</Typography>
         </CardContent>
       )}
-      <CardActions sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <CardActions sx={{ display: "flex", justifyContent: "flex-end", marginTop: "auto" }}>
         <Button onClick={() => navigate("/t/" + topic + "/p/" + post.id)}>
           View
         </Button>
         <Button>Reply</Button>
       </CardActions>
     </Card>
+    </Grid>
   );
 }

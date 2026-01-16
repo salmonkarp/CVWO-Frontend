@@ -28,12 +28,6 @@ export default function Dashboard(props: DashboardProps) {
           gap: 2
         }}
       >
-        {/* <Backdrop
-          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-          open={isLoading}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop> */}
         <Toolbar />
         <Typography variant="h5">Welcome to Qrator, {username}.</Typography>
         <Typography variant="body1">

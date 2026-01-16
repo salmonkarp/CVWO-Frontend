@@ -1,12 +1,11 @@
 import { Box, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import PostCard from "./PostCard";
 import { fetchComments } from "../helpers/Fetchers";
 import CommentCard from "./CommentCard";
 
 const COMMENTS_PER_PAGE = 10;
 
-export default function CommentsList(props: {topic: string; postId: string, ownUsername: string}) {
+export default function CommentsList(props: {topic: string; postId: string, ownUsername: string, refreshTrigger?: number}) {
     const topic = props.topic;
     const postId = props.postId;
     const [comments, setComments] = useState<Array<any>>([]);
@@ -21,7 +20,7 @@ export default function CommentsList(props: {topic: string; postId: string, ownU
             setComments(await fetchComments(postId || ''));
         }
         loadData();
-    }, [topic]);
+    }, [topic, props.refreshTrigger]);
 
     return (
         <Box sx={{
