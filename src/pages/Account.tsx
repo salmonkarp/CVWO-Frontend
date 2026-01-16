@@ -26,22 +26,66 @@ export default function Account(props: DashboardProps) {
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [file, setFile] = useState<File | null>(null);
+    const [imageUrl, setImageUrl] = useState<string>("");
+    const [imageUpdatedAt, setImageUpdatedAt] = useState<string>("");
+
+    const loadUserData = async () => {
+        const userData = await fetchUser(username || '');
+        if (userData.imageUrl) {
+            setImageUrl(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
+            setImageUpdatedAt(userData.imageUpdatedAt);
+        }
+    };
 
     useEffect(() => {
-        const loadUserData = async () => {
-            const userData = await fetchUser(username || '');
-            if (userData.imageUrl) {
-                setFile(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
-            }
-        };
         loadUserData();
     }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (file == null) return;
         setIsSubmitting(true);
-        setIsError(false);
-        setErrorMessage("");
+        const base64Image = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+            const result = reader.result as string;
+            resolve(result.split(",")[1]);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+        const payload = {
+            image: base64Image || null,
+        }
+        try {
+            const response = await fetch(
+                import.meta.env.VITE_BACKEND_API_URL + "/edituser",
+                {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${
+                    JSON.parse(localStorage.getItem("token") || "").token
+                    }`,
+                },
+                body: JSON.stringify(payload),
+                }
+            );
+            const data = await response.text();
+            if (response.ok) {
+                loadUserData();
+            } else {
+                setIsError(true);
+                setErrorMessage(
+                data || "Failed to submit the topic. Please try again."
+                );
+            }
+        } catch {
+            setIsError(true);
+            setErrorMessage("Failed to submit the topic. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,7 +143,7 @@ export default function Account(props: DashboardProps) {
                     width: "100%",
                     gap: 2,
                 }}>
-                    <Avatar src={file ? URL.createObjectURL(file) : undefined}></Avatar>
+                    <Avatar src={file ? URL.createObjectURL(file) : imageUrl + `?v=${imageUpdatedAt || Date.now()}`}></Avatar>
                     <TextField
                         label="Name"
                         variant="standard"

@@ -1,12 +1,12 @@
 import { Box, Pagination, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { fetchComments } from "../helpers/Fetchers";
 import CommentCard from "./CommentCard";
 
 const COMMENTS_PER_PAGE = 10;
 
 export default function CommentsList(props: {topic: string; postId: string, ownUsername: string, refreshTrigger?: number}) {
-    const topic = props.topic;
+    // const topic = props.topic;
     const postId = props.postId;
     const [comments, setComments] = useState<Array<any>>([]);
     const [page, setPage] = useState(1);
@@ -15,12 +15,13 @@ export default function CommentsList(props: {topic: string; postId: string, ownU
         setPage(value);
     }
 
+    const loadData = useCallback(async () => {
+        setComments(await fetchComments(postId || ''));
+    }, [postId])
+
     useEffect(() => {
-        const loadData = async () => {
-            setComments(await fetchComments(postId || ''));
-        }
         loadData();
-    }, [topic, props.refreshTrigger]);
+    }, [postId, props.refreshTrigger, loadData])
 
     return (
         <Box sx={{
@@ -31,7 +32,7 @@ export default function CommentsList(props: {topic: string; postId: string, ownU
         }}>
             <Box sx={{ flexGrow: 1, width: "100%" }}>
                 {comments.slice((page - 1) * COMMENTS_PER_PAGE, page * COMMENTS_PER_PAGE).map((comment) => (
-                    <CommentCard comment={comment} ownUsername={props.ownUsername}></CommentCard>
+                    <CommentCard key={comment.id} comment={comment} ownUsername={props.ownUsername} onCommentUpdate={loadData}></CommentCard>
                 ))}
                 {
                     comments.length === 0 && (

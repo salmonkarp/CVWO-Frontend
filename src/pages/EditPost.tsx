@@ -106,7 +106,7 @@ export default function AddTopic(props: DashboardProps) {
             }}
           >
             <Box sx={{ height: 20, position: 'absolute', ml: -3, mt: -3}}>
-                <IconButton onClick={() => navigate('/t/' + params.topic)}>
+                <IconButton onClick={() => navigate('/t/' + params.topic + '/p/' + params.postId)}>
                 <ArrowBack />
                 </IconButton>
             </Box>

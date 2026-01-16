@@ -41,7 +41,7 @@ export default function PostsList(props: {
             <PostCard post={post} ownUsername={props.ownUsername}></PostCard>
           ))}
         {posts.length === 0 && (
-          <Box sx={{ mt: 4, textAlign: "center" }}>
+          <Box sx={{ mt: 4, textAlign: "center", width: "100%" }}>
             <Typography variant="h6">No posts yet. Create one now!</Typography>
           </Box>
         )}

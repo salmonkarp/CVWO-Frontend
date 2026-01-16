@@ -41,6 +41,7 @@ export default function Topic(props: {
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
   const [postDetails, setPostDetails] = useState<any>(null);
   const [postImage, setPostImage] = useState<string>("");
+  const [postImageUpdatedAt, setPostImageUpdatedAt] = useState<string>("");
   const [postUsername, setPostUsername] = useState<string>("");
   const [topicDetails, setTopicDetails] = useState<any>(null);
   const [commentsRefreshTrigger, setCommentsRefreshTrigger] =
@@ -50,11 +51,11 @@ export default function Topic(props: {
   const navigate = useNavigate();
 
   const loadUserData = async (postData: any) => {
-    await new Promise((resolve) => setTimeout(resolve, 200));
     const userData = await fetchUser(postData.creator || "");
     if (userData) setPostUsername(userData.username);
     if (userData.imageUrl)
       setPostImage(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
+      setPostImageUpdatedAt(userData.imageUpdatedAt);
   };
 
   const handleDelete = async () => {
@@ -182,7 +183,7 @@ export default function Topic(props: {
                   }}
                 >
                   <Avatar
-                    src={postImage}
+                    src={postImage + `?v=${postImageUpdatedAt || Date.now()}`}
                     sx={{
                       width: 32,
                       height: 32,
@@ -268,7 +269,6 @@ export default function Topic(props: {
             color="secondary"
             aria-label="Reply"
             size="large"
-            onClick={() => navigate("/t/" + topic + "/p/" + postId + "/reply")}
             sx={{
               position: "fixed",
               bottom: 32,

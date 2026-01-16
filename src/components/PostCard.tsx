@@ -1,9 +1,8 @@
 import {
   Avatar,
   Box,
-  Button,
   Card,
-  CardActions,
+  CardActionArea,
   CardContent,
   Grid,
   Skeleton,
@@ -20,6 +19,7 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
   const [postUsername, setPostUsername] = useState<string>("");
   const [postImage, setPostImage] = useState<string>("");
+  const [postImageUpdatedAt, setPostImageUpdatedAt] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,6 +31,7 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
       }
       if (userData.imageUrl) {
         setPostImage(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
+        setPostImageUpdatedAt(userData.imageUpdatedAt);
       }
       setHasLoaded(true);
     };
@@ -48,6 +49,13 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
       <Card
         sx={{ flexGrow: 1, mb: 3, display: "flex", flexDirection: "column" }}
       >
+        <CardActionArea sx={{
+          height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "stretch",
+            justifyContent: "flex-start",
+        }} onClick={() => navigate('/t/' + topic + '/p/' + post.id)}>
         {!hasLoaded ? (
           <CardContent>
             <Box
@@ -77,7 +85,7 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
               }}
             >
               <Avatar
-                src={postImage}
+                src={postImage + `?v=${postImageUpdatedAt || Date.now()}`}
                 sx={{
                   width: 32,
                   height: 32,
@@ -123,24 +131,14 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
                 overflow: "hidden",
                 whiteSpace: "pre-wrap",
                 wordBreak: "break-word",
+                mb: 2
               }}
             >
               {post.body}
             </Typography>
           </CardContent>
         )}
-        <CardActions
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "auto",
-          }}
-        >
-          <Button onClick={() => navigate("/t/" + topic + "/p/" + post.id)}>
-            View
-          </Button>
-          <Button>Reply</Button>
-        </CardActions>
+        </CardActionArea>
       </Card>
     </Grid>
   );

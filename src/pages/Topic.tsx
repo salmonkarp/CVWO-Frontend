@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -19,6 +18,8 @@ import { useEffect, useState } from "react";
 import PostsList from "../components/PostsList";
 import AddIcon from "@mui/icons-material/Add";
 import { fetchTopic } from "../helpers/Fetchers";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 export default function Topic(props: {
   username: string;
@@ -73,10 +74,15 @@ export default function Topic(props: {
                 title={topicDetails?.name}
               />
               <CardContent>
-                <Typography variant="h5" sx={{
+                <Typography
+                  variant="h5"
+                  sx={{
                     whiteSpace: "pre-wrap",
                     wordBreak: "break-word",
-                  }}>t/{topicDetails?.name}</Typography>
+                  }}
+                >
+                  t/{topicDetails?.name}
+                </Typography>
                 <Typography
                   variant="body1"
                   sx={{
@@ -91,10 +97,12 @@ export default function Topic(props: {
                 <CardActions
                   sx={{ display: "flex", justifyContent: "flex-end" }}
                 >
-                  <Button onClick={() => navigate("/t/" + topic + "/edit")}>
-                    Edit
-                  </Button>
-                  <Button>Delete</Button>
+                  <IconButton onClick={() => navigate("/t/" + topic + "/edit")} color="primary">
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton color="secondary">
+                    <DeleteIcon />
+                  </IconButton>
                 </CardActions>
               )}
             </Card>

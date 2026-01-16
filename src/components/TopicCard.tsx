@@ -62,7 +62,7 @@ export default function TopicCard(props: { topic: any }) {
             <Typography
               sx={{
                 display: "-webkit-box",
-                WebkitLineClamp: 3,
+                WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
                 whiteSpace: "pre-wrap",
