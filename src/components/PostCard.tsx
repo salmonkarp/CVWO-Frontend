@@ -24,7 +24,7 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
 
   useEffect(() => {
     const loadUserData = async () => {
-    //   await new Promise(resolve => setTimeout(resolve, 500));
+      //   await new Promise(resolve => setTimeout(resolve, 500));
       const userData = await fetchUser(post.creator || "");
       if (userData) {
         setPostUsername(userData.username);
@@ -45,61 +45,103 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
         display: "flex",
       }}
     >
-    <Card sx={{ flexGrow: 1, mb: 3, display: "flex", flexDirection: "column" }}>
-      {!hasLoaded ? (
-        <CardContent>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
-              mb: 2,
-            }}
-          >
-            <Skeleton variant="circular" width={32} height={32} />
-            <Skeleton variant="text" width={150} height={20} />
-          </Box>
-          <Skeleton variant="text" width="80%" height={30} sx={{ mb: 1 }} />
-          <Skeleton variant="text" width="80%" height={20} />
-        </CardContent>
-      ) : (
-        <CardContent>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 1,
-              mb: 2,
-            }}
-          >
-            <Avatar
-              src={postImage}
+      <Card
+        sx={{ flexGrow: 1, mb: 3, display: "flex", flexDirection: "column" }}
+      >
+        {!hasLoaded ? (
+          <CardContent>
+            <Box
               sx={{
-                width: 32,
-                height: 32,
-                backgroundColor: "primary.main",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 1,
+                mb: 2,
               }}
             >
-              {postUsername ? postUsername[0].toLocaleLowerCase() : ""}
-            </Avatar>
-            <Typography variant="subtitle1" color="text.secondary">
-              Posted by u/{postUsername} in t/{post.topic} -{" "}
-              {getTimeElapsed(post.created_at)}
+              <Skeleton variant="circular" width={32} height={32} />
+              <Skeleton variant="text" width={150} height={20} />
+            </Box>
+            <Skeleton variant="text" width="80%" height={30} sx={{ mb: 1 }} />
+            <Skeleton variant="text" width="80%" height={20} />
+          </CardContent>
+        ) : (
+          <CardContent>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 1,
+                mb: 2,
+              }}
+            >
+              <Avatar
+                src={postImage}
+                sx={{
+                  width: 32,
+                  height: 32,
+                  backgroundColor: "primary.main",
+                }}
+              >
+                {postUsername ? postUsername[0].toLocaleLowerCase() : ""}
+              </Avatar>
+              <Typography
+                variant="subtitle1"
+                color="text.secondary"
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  minWidth: 0,
+                }}
+              >
+                Posted by u/{postUsername} in t/{post.topic} -{" "}
+                {getTimeElapsed(post.created_at)}
+              </Typography>
+            </Box>
+            <Typography
+              variant="h6"
+              sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+              }}
+            >
+              {post.title}
             </Typography>
-          </Box>
-          <Typography variant="h6">{post.title}</Typography>
-          <Typography variant="body1">{post.body}</Typography>
-        </CardContent>
-      )}
-      <CardActions sx={{ display: "flex", justifyContent: "flex-end", marginTop: "auto" }}>
-        <Button onClick={() => navigate("/t/" + topic + "/p/" + post.id)}>
-          View
-        </Button>
-        <Button>Reply</Button>
-      </CardActions>
-    </Card>
+            <Typography
+              variant="body1"
+              marginTop={1}
+              sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+              }}
+            >
+              {post.body}
+            </Typography>
+          </CardContent>
+        )}
+        <CardActions
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "auto",
+          }}
+        >
+          <Button onClick={() => navigate("/t/" + topic + "/p/" + post.id)}>
+            View
+          </Button>
+          <Button>Reply</Button>
+        </CardActions>
+      </Card>
     </Grid>
   );
 }

@@ -10,6 +10,7 @@ import Account from "./pages/Account";
 import AddPost from "./pages/AddPost";
 import EditTopic from "./pages/EditTopic";
 import Post from "./pages/Post";
+import EditPost from "./pages/EditPost";
 
 const theme = createTheme({
   palette: {
@@ -125,6 +126,16 @@ const App = () => {
           element={
             isLoggedIn ? (
               <Post username={username || ""} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/t/:topic/p/:postId/edit"
+          element={
+            isLoggedIn ? (
+              <EditPost username={username || ""} onLogout={handleLogout} />
             ) : (
               <Navigate to="/login" />
             )

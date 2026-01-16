@@ -11,7 +11,10 @@ import { fetchUser } from "../helpers/Fetchers";
 import { getTimeElapsed } from "../helpers/Helpers";
 import { useParams } from "react-router-dom";
 
-export default function CommentCard(props: { comment: any; ownUsername: string }) {
+export default function CommentCard(props: {
+  comment: any;
+  ownUsername: string;
+}) {
   const { ownUsername, comment } = props;
   const { topic } = useParams<{ topic: string }>();
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
@@ -20,13 +23,15 @@ export default function CommentCard(props: { comment: any; ownUsername: string }
 
   useEffect(() => {
     const loadUserData = async () => {
-    //   await new Promise(resolve => setTimeout(resolve, 500));
+      //   await new Promise(resolve => setTimeout(resolve, 500));
       const userData = await fetchUser(comment.creator || "");
       if (userData) {
         setCommentUsername(userData.username);
       }
       if (userData.imageUrl) {
-        setCommentImage(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
+        setCommentImage(
+          import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl
+        );
       }
       setHasLoaded(true);
     };
@@ -73,13 +78,37 @@ export default function CommentCard(props: { comment: any; ownUsername: string }
             >
               {commentUsername ? commentUsername[0].toLocaleLowerCase() : ""}
             </Avatar>
-            <Typography variant="subtitle1" color="text.secondary">
-              u/{commentUsername} -{" "}
-              {getTimeElapsed(comment.created_at)}
+            <Typography
+              variant="subtitle1"
+              color="text.secondary"
+              sx={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
+              }}
+            >
+              u/{commentUsername} - {getTimeElapsed(comment.created_at)}
             </Typography>
           </Box>
-          <Typography variant="h6">{comment.title}</Typography>
-          <Typography variant="body1">{comment.body}</Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
+            {comment.title}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
+            {comment.body}
+          </Typography>
         </CardContent>
       )}
       {/* <CardActions sx={{ display: "flex", justifyContent: "flex-end" }}>

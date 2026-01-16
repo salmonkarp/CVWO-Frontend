@@ -46,8 +46,31 @@ export default function TopicCard(props: { topic: any }) {
             title={topic.name}
           />
           <CardContent>
-            <Typography variant="h6">t/{topic.name}</Typography>
-            <Typography>{topic.description}</Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                display: "-webkit-box",
+                    WebkitLineClamp: 1,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+              }}
+            >
+              t/{topic.name}
+            </Typography>
+            <Typography
+              sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+              }}
+            >
+              {topic.description}
+            </Typography>
             {/* TODO: Limit description length in DB later or concat here */}
           </CardContent>
         </CardActionArea>
