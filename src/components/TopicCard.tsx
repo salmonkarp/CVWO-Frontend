@@ -14,7 +14,7 @@ export default function TopicCard(props: { topic: any }) {
   return (
     <Grid
       size={{ xs: 12, sm: 6, md: 4 }}
-      key={topic.id}
+      key={topic.name}
       sx={{
         display: "flex",
       }}

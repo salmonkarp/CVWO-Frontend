@@ -233,7 +233,7 @@ export default function CommentCard(props: {
                 wordBreak: "break-word",
               }}
             >
-              u/{commentUsername} {comment.is_edited ? "(edited)" : ""} -{" "}
+              u/{commentUsername} {comment.is_edited ? "(edited) " : ""}-{" "}
               {getTimeElapsed(comment.created_at)}
             </Typography>
           </Box>
