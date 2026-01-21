@@ -1,7 +1,7 @@
 import { Box, Fade, Grid, Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import TopicCard from "./TopicCard";
-import { fetchTopics } from "../helpers/Fetchers";
+import { fetchTopics } from "../helpers/fetchers";
 
 const TOPICS_PER_PAGE = 6;
 

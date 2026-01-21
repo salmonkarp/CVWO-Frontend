@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { fetchComments } from "../helpers/Fetchers";
+import { fetchComments } from "../helpers/fetchers";
 import CommentCard from "./CommentCard";
 
 export default function CommentsList(props: {topic: string; postId: string, ownUsername: string, refreshTrigger?: number}) {

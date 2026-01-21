@@ -9,8 +9,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { fetchUser } from "../helpers/Fetchers";
-import { getTimeElapsed } from "../helpers/Helpers";
+import { fetchUser } from "../helpers/fetchers";
+import { getTimeElapsed } from "../helpers/helpers";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";

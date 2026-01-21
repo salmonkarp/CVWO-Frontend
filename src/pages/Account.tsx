@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import type { DashboardProps } from "./Dashboard";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useEffect, useState } from "react";
-import { fetchUser } from "../helpers/Fetchers";
+import { fetchUser } from "../helpers/fetchers";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',

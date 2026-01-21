@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { DashboardProps } from "./Dashboard";
 import { ArrowBack } from "@mui/icons-material";
-import { fetchPost } from "../helpers/Fetchers";
+import { fetchPost } from "../helpers/fetchers";
 
 export default function AddTopic(props: DashboardProps) {
   const { onLogout } = props;

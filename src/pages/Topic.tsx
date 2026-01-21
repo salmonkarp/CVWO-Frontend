@@ -23,7 +23,7 @@ import { ArrowBack } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import PostsList from "../components/PostsList";
 import AddIcon from "@mui/icons-material/Add";
-import { fetchTopic } from "../helpers/Fetchers";
+import { fetchTopic } from "../helpers/fetchers";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 

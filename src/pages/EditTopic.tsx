@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { ArrowBack } from "@mui/icons-material";
-import { fetchTopic } from "../helpers/Fetchers";
+import { fetchTopic } from "../helpers/fetchers";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',

@@ -9,8 +9,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { fetchUser } from "../helpers/Fetchers";
-import { getTimeElapsed } from "../helpers/Helpers";
+import { fetchUser } from "../helpers/fetchers";
+import { getTimeElapsed } from "../helpers/helpers";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function PostCard(props: { post: any; ownUsername: string }) {

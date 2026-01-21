@@ -1,7 +1,7 @@
 import { Box, Grid, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import PostCard from "./PostCard";
-import { fetchPosts } from "../helpers/Fetchers";
+import { fetchPosts } from "../helpers/fetchers";
 
 const POSTS_PER_PAGE = 6;
 
