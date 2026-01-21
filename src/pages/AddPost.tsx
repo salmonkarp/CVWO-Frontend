@@ -63,6 +63,8 @@ export default function AddTopic(props: DashboardProps) {
     }
   };
 
+  const tooLong = body?.split(/\r?\n|\r|\n/g).length > 10;
+
   return (
     <Container sx={{ display: "flex", minHeight: "100vh" }}>
       <NavBar onLogout={onLogout} window={window} />
@@ -117,7 +119,10 @@ export default function AddTopic(props: DashboardProps) {
                 variant="outlined"
                 multiline
                 rows = {4}
+                maxRows={5}
                 value={body}
+                error={tooLong}
+                helperText={tooLong ? "Body cannot exceed 10 lines." : ""}
                 onChange={(e) => {setBody(e.target.value); setIsError(false); setErrorMessage("");}}
             ></TextField>
 
@@ -132,6 +137,7 @@ export default function AddTopic(props: DashboardProps) {
               type="submit"
               fullWidth
               sx={{ mt: 2 }}
+              disabled={tooLong}
               loading={isSubmitting}
             >
               Submit

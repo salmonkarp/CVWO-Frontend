@@ -13,31 +13,38 @@ import { fetchUser } from "../helpers/Fetchers";
 import { getTimeElapsed } from "../helpers/Helpers";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import CloseIcon from '@mui/icons-material/Close';
-import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from "@mui/icons-material/Close";
+import CheckIcon from "@mui/icons-material/Check";
+import ReplyIcon from "@mui/icons-material/Reply";
+import SendIcon from "@mui/icons-material/Send";
 
 export default function CommentCard(props: {
   comment: any;
   ownUsername: string;
   onCommentUpdate?: () => void;
+  isReply?: boolean;
 }) {
   const { ownUsername, comment, onCommentUpdate } = props;
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
   const [commentUsername, setCommentUsername] = useState<string>("");
   const [commentImage, setCommentImage] = useState<string>("");
-  const [commentImageUpdatedAt, setCommentImageUpdatedAt] = useState<string>("");
+  const [commentImageUpdatedAt, setCommentImageUpdatedAt] =
+    useState<string>("");
   const [commentBody, setCommentBody] = useState<string>("");
   const [originalCommentBody, setOriginalCommentBody] = useState<string>("");
+  const [commentChildren, setCommentChildren] = useState<any[]>([]);
+  const [reply, setReply] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isReplying, setIsReplying] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     const payload = {
-        id: comment.id,
-        body: commentBody,
-    }
+      id: comment.id,
+      body: commentBody,
+    };
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_API_URL + "/editcomment",
@@ -50,7 +57,7 @@ export default function CommentCard(props: {
             }`,
           },
           body: JSON.stringify(payload),
-        }
+        },
       );
       const data = await response.text();
       if (response.ok) {
@@ -68,8 +75,48 @@ export default function CommentCard(props: {
     }
   };
 
+  const handleReplySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const payload = {
+      post: comment.post,
+      parent: comment.id,
+      body: reply,
+    };
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_API_URL + "/addcomment",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("token") || "").token
+            }`,
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+      const data = await response.text();
+      if (response.ok) {
+        setIsReplying(false);
+        setReply("");
+        if (onCommentUpdate) {
+          onCommentUpdate();
+        }
+      } else {
+        alert("Failed to submit reply: " + data);
+      }
+    } catch (error) {
+      alert("Error submitting reply: " + error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this comment?")) {
+      //TODO: Replace this later with real MUI dialog
       return;
     }
     try {
@@ -84,7 +131,7 @@ export default function CommentCard(props: {
             }`,
           },
           body: JSON.stringify({ id: comment.id }),
-        }
+        },
       );
       const data = await response.text();
       if (response.ok) {
@@ -107,19 +154,30 @@ export default function CommentCard(props: {
       }
       if (userData.imageUrl) {
         setCommentImage(
-          import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl
+          import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl,
         );
         setCommentImageUpdatedAt(userData.imageUpdatedAt);
       }
       setHasLoaded(true);
     };
+
     setCommentBody(comment.body);
     setOriginalCommentBody(comment.body);
+    setCommentChildren(comment.children || []);
     loadUserData();
-  }, [comment.body]);
+  }, [comment]);
 
   return (
-    <Card sx={{ flexGrow: 1, mb: 3, display: "flex", flexDirection: "column" }}>
+    <Card
+      sx={{
+        flexGrow: 1,
+        display: "flex",
+        flexDirection: "column",
+        p: props.isReply ? 0 : 1,
+        mb: props.isReply ? 0 : 3,
+      }}
+      elevation={props.isReply ? 0 : 1}
+    >
       {!hasLoaded ? (
         <CardContent>
           <Box
@@ -138,7 +196,7 @@ export default function CommentCard(props: {
           <Skeleton variant="text" width="80%" height={20} />
         </CardContent>
       ) : (
-        <CardContent>
+        <CardContent sx={{pr: 0}}>
           <Box
             sx={{
               display: "flex",
@@ -146,10 +204,15 @@ export default function CommentCard(props: {
               alignItems: "center",
               gap: 1,
               mb: 2,
+              pr: 0, mr: 0,
             }}
           >
             <Avatar
-              src={commentImage ? commentImage + `?v=${commentImageUpdatedAt || Date.now()}` : ""}
+              src={
+                commentImage
+                  ? commentImage + `?v=${commentImageUpdatedAt || Date.now()}`
+                  : ""
+              }
               sx={{
                 width: 32,
                 height: 32,
@@ -162,71 +225,160 @@ export default function CommentCard(props: {
               variant="subtitle1"
               color="text.secondary"
               sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
                 overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                minWidth: 0,
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
               }}
             >
-              u/{commentUsername} - {getTimeElapsed(comment.created_at)}
+              u/{commentUsername} {comment.is_edited ? "(edited)" : ""} -{" "}
+              {getTimeElapsed(comment.created_at)}
             </Typography>
           </Box>
           <form onSubmit={handleSubmit} style={{ display: "contents" }}>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1,
-              alignItems: "center",
-            }}
-          >
-            <Box sx={{ flex: 1 }}>
-              <Typography
-                variant="h6"
-                sx={{
-                  whiteSpace: "pre-wrap",
-                  wordBreak: "break-word",
-                }}
-              >
-                {comment.title}
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  whiteSpace: "pre-wrap",
-                  wordBreak: "break-word",
-                }}
-                display={isEditing ? "none" : "block"}
-              >
-                {commentBody}
-              </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: {sm: "row", xs: "column"},
+                gap: 1,
+                alignItems: {sm: "center", xs: "stretch"},
+              }}
+            >
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {comment.title}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                  }}
+                  display={isEditing ? "none" : "block"}
+                >
+                  {commentBody}
+                </Typography>
+                <TextField
+                  defaultValue={comment.body}
+                  value={commentBody}
+                  onChange={(e) => setCommentBody(e.target.value)}
+                  sx={{ display: !isEditing ? "none" : "block" }}
+                  size="small"
+                  required
+                  fullWidth
+                />
+              </Box>
+
+              
+                <Box sx={{ display: "flex", gap: 0.5, mr: 1, alignSelf: {sm: "flex-start", xs: "flex-end"} }}>
+                  <IconButton
+                    size="small"
+                    onClick={() => setIsReplying(true)}
+                    sx={{ display: isReplying || isEditing ? "none" : "block" }}
+                  >
+                    <ReplyIcon fontSize="small" />
+                  </IconButton>
+                  {ownUsername == commentUsername && (
+                    <>
+                  <IconButton
+                    size="small"
+                    onClick={() => setIsEditing(true)}
+                    sx={{ display: isEditing || isReplying ? "none" : "block" }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={handleDelete}
+                    sx={{ display: isEditing || isReplying ? "none" : "block" }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    sx={{ display: !isEditing ? "none" : "block" }}
+                    onClick={() => {
+                      setIsEditing(false);
+                      setIsReplying(false);
+                      setCommentBody(originalCommentBody);
+                    }}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    type="submit"
+                    sx={{ display: !isEditing ? "none" : "block" }}
+                    disabled={isSubmitting}
+                  >
+                    <CheckIcon fontSize="small" />
+                  </IconButton>
+                  </>
+                  )}
+                </Box>
+              
+            </Box>
+          </form>
+          <form onSubmit={handleReplySubmit} style={{ display: "contents" }}>
+            <Box
+              sx={{
+                gap: 1,
+                alignItems: "center",
+                mt: 2,
+                display: !isReplying ? "none" : "flex",
+              }}
+            >
               <TextField
-                defaultValue={comment.body}
-                value={commentBody}
-                onChange={(e) => setCommentBody(e.target.value)}
-                sx={{ display: !isEditing ? "none" : "block" }}
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
                 size="small"
                 required
                 fullWidth
+                label="Write a reply..."
               />
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setIsEditing(false);
+                  setIsReplying(false);
+                  setCommentBody(originalCommentBody);
+                }}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+              <IconButton size="small" type="submit" disabled={isSubmitting}>
+                <SendIcon fontSize="small" />
+              </IconButton>
             </Box>
-            {ownUsername == commentUsername && (
-              <Box sx={{ display: "flex", gap: 0.5}}>
-                <IconButton size="small" onClick={() => setIsEditing(true)} sx={{ display: isEditing ? "none" : "block"}}>
-                  <EditIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" onClick={handleDelete} sx={{ display: isEditing ? "none" : "block"}}>
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" sx={{ display: !isEditing ? "none" : "block"}} onClick={() => {setIsEditing(false); setCommentBody(originalCommentBody);}}>
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" type="submit" sx={{ display: !isEditing ? "none" : "block"}} disabled={isSubmitting}>
-                  <CheckIcon fontSize="small" />
-                </IconButton>
-              </Box>
-            )}
-          </Box>
           </form>
+          {commentChildren.length > 0 && (
+            <Box
+              sx={{
+                mt: 2,
+                pl: 1,
+                borderLeft: "2px solid",
+                borderColor: "divider",
+              }}
+            >
+              {commentChildren.map((childComment) => (
+                <CommentCard
+                  key={childComment.id}
+                  comment={childComment}
+                  ownUsername={ownUsername}
+                  onCommentUpdate={onCommentUpdate}
+                  isReply={true}
+                />
+              ))}
+            </Box>
+          )}
         </CardContent>
       )}
     </Card>

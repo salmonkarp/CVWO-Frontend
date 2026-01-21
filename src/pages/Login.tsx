@@ -11,6 +11,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [isRequesting, setIsRequesting] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -31,6 +32,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         onLoginSuccess(data, username);
       } else {
         setIsError(true);
+        setErrorMessage(data);
       }
     } catch {
       setIsError(true);
@@ -62,7 +64,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           sx={{ mb: 2 }}
           required={true}
           error={isError}
-          helperText={isError ? 'Login failed. Please try again.' : ''}
+          helperText={isError ? errorMessage : ''}
         />
         <Button variant="contained" type='submit' loading={isRequesting} fullWidth>
           Login

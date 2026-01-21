@@ -1,10 +1,16 @@
 import {
   Box,
+  Button,
   Card,
   CardActions,
   CardContent,
   CardMedia,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Fab,
   Fade,
   IconButton,
@@ -30,6 +36,8 @@ export default function Topic(props: {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [topicDetails, setTopicDetails] = useState<any>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -38,8 +46,61 @@ export default function Topic(props: {
     loadData().then(() => setIsLoading(false));
   }, [topic]);
 
+  const handleDelete = async () => {
+    setIsSubmitting(true);
+    const payload = {
+      name: topic,
+    };
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_API_URL + "/deletetopic",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("token") || "").token
+            }`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      await response.text();
+      if (response.ok) {
+        navigate("/dashboard");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Container sx={{ display: "flex", minHeight: "100vh" }}>
+      <Dialog
+        open={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Delete post?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            This is permanent and cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setIsDeleteDialogOpen(false)}
+            autoFocus
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button onClick={() => handleDelete()} disabled={isSubmitting}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <NavBar onLogout={onLogout} window={window} />
       <Fade in={!isLoading} timeout={500}>
         <Box
@@ -100,7 +161,7 @@ export default function Topic(props: {
                   <IconButton onClick={() => navigate("/t/" + topic + "/edit")} color="primary">
                     <EditIcon />
                   </IconButton>
-                  <IconButton color="secondary">
+                  <IconButton onClick={() => setIsDeleteDialogOpen(true)} color="secondary">
                     <DeleteIcon />
                   </IconButton>
                 </CardActions>

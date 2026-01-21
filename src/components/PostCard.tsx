@@ -98,13 +98,15 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
                 variant="subtitle1"
                 color="text.secondary"
                 sx={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: "vertical",
                   overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  minWidth: 0,
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
                 }}
               >
-                Posted by u/{postUsername} in t/{post.topic} -{" "}
+                Posted by u/{postUsername} in t/{post.topic} {post.is_edited ? "(edited)" : ""} -{" "}
                 {getTimeElapsed(post.created_at)}
               </Typography>
             </Box>

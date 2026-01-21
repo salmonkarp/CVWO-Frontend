@@ -1,15 +1,25 @@
 import { TextField, InputAdornment, IconButton } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import { useParams } from "react-router-dom";
 
-export default function ReplyInput(props: { onCommentAdded?: () => void }) {
+export default function ReplyInput(props: { onCommentAdded?: () => void, isFocused?: boolean, setIsFocused?: (focused: boolean) => void }) {
     const params = useParams<{postId: string}>();
     const [replyContent, setReplyContent] = useState("");
-    const [isFocused, setIsFocused] = useState(false);
+    const [localIsFocused, setLocalIsFocused] = useState(props.isFocused || false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (props.isFocused) {
+      setLocalIsFocused(true);
+      inputRef.current?.focus();
+    } else {
+      setLocalIsFocused(false);
+    }
+  }, [props.isFocused]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -58,16 +68,24 @@ export default function ReplyInput(props: { onCommentAdded?: () => void }) {
             fullWidth
             variant="outlined"
             label="Reply to the post here..."
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onFocus={() => {
+              setLocalIsFocused(true);
+              props.setIsFocused?.(true);
+            }}
+            onBlur={() => {
+              setLocalIsFocused(false);
+              props.setIsFocused?.(false);
+            }}
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
             disabled={isSubmitting}
             error={isError}
             helperText={errorMessage}
+            focused={props.isFocused ?? localIsFocused}
+            inputRef={inputRef}
             slotProps={{
               input: {
-                endAdornment: (isFocused || replyContent) && (
+                endAdornment: ((props.isFocused ?? localIsFocused) || replyContent) && (
                   <InputAdornment position="end">
                     <IconButton color="primary" type="submit" disabled={isSubmitting}>
                       <SendIcon></SendIcon>

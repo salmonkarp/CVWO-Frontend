@@ -48,6 +48,7 @@ export default function Topic(props: {
     useState<number>(0);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMainReplyFocused, setIsMainReplyFocused] = useState(false);
   const navigate = useNavigate();
 
   const loadUserData = async (postData: any) => {
@@ -193,7 +194,7 @@ export default function Topic(props: {
                     {postUsername ? postUsername[0].toLocaleLowerCase() : ""}
                   </Avatar>
                   <Typography variant="subtitle1" color="text.secondary">
-                    Posted by u/{postUsername} in t/{topic} -{" "}
+                    Posted by u/{postUsername} in t/{topic} {postDetails.is_edited ? "(edited)" : ""} -{" "}
                     {getTimeElapsed(postDetails.created_at)}
                   </Typography>
                 </Box>
@@ -257,6 +258,8 @@ export default function Topic(props: {
           </Card>
           <ReplyInput
             onCommentAdded={() => setCommentsRefreshTrigger((prev) => prev + 1)}
+            isFocused={isMainReplyFocused}
+            setIsFocused={setIsMainReplyFocused}
           ></ReplyInput>
           <Typography variant="h6">Replies</Typography>
           <CommentsList
@@ -274,6 +277,7 @@ export default function Topic(props: {
               bottom: 32,
               right: 32,
             }}
+            onClick={() => {setIsMainReplyFocused(true);}}
           >
             <ReplyIcon></ReplyIcon>
           </Fab>

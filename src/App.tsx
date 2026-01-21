@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material";
 import AddTopic from "./pages/AddTopic";
 import Topic from "./pages/Topic";
@@ -46,6 +46,26 @@ const App = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
   };
+
+  useEffect(() => {
+    // verify token validity on app load
+    try {
+      if (token) {
+        fetch(import.meta.env.VITE_BACKEND_API_URL + "/protected", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${JSON.parse(token).token}`,
+          },
+        }).then((response) => {
+          if (!response.ok) {
+            handleLogout();
+          }
+        });
+      }
+    } catch (error) {
+      handleLogout();
+    }
+  }, [token]);
 
   return (
     <ThemeProvider theme={theme}>
