@@ -2,12 +2,13 @@ import { Box, Fade, Grid, Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import TopicCard from "./TopicCard";
 import { fetchTopics } from "../helpers/fetchers";
+import type { Topic } from "../types";
 
 const TOPICS_PER_PAGE = 6;
 
 export default function TopicsList() {
   const [isLoading, setIsLoading] = useState(true);
-  const [topics, setTopics] = useState<Array<any>>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
   const [page, setPage] = useState(1);
   const [fadeIn, setFadeIn] = useState(false);
 

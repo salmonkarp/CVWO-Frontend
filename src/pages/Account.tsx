@@ -31,10 +31,10 @@ export default function Account(props: DashboardProps) {
     const [imageUpdatedAt, setImageUpdatedAt] = useState<string>("");
 
     const loadUserData = async () => {
-        const userData = await fetchUser(username || '');
-        if (userData.imageUrl) {
+        const userData = await fetchUser(username || "");
+        if (userData?.imageUrl) {
             setImageUrl(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
-            setImageUpdatedAt(userData.imageUpdatedAt);
+            setImageUpdatedAt(userData.imageUpdatedAt || '');
         }
     };
 

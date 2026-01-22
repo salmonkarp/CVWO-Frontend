@@ -1,4 +1,6 @@
-export const fetchUser = async (username: string) => {
+import type { User, Topic, Post, Comment } from "../types";
+
+export const fetchUser = async (username: number | string): Promise<User | null> => {
     try {
         const stored = localStorage.getItem("token");
         const token = stored ? JSON.parse(stored).token : null;
@@ -11,17 +13,19 @@ export const fetchUser = async (username: string) => {
         });
         const data = await response.text();
         if (response.ok) {
-            const parsedData = JSON.parse(data);
+            const parsedData: User = JSON.parse(data);
             return parsedData;
         } else {
             console.error("Error fetching user data:", data);
+            return null;
         }
     } catch (error) {
         console.error("Error fetching user data:", error);
+        return null;
     }
 };
 
-export const fetchTopic = async (topic: string) => {
+export const fetchTopic = async (topic: string): Promise<Topic | null> => {
     try {
         const stored = localStorage.getItem("token");
         const token = stored ? JSON.parse(stored).token : null;
@@ -34,17 +38,19 @@ export const fetchTopic = async (topic: string) => {
         });
         const data = await response.text();
         if (response.ok) {
-            const parsedData = JSON.parse(data);
+            const parsedData: Topic = JSON.parse(data);
             return parsedData;
         } else {
             console.error("Error fetching topic details:", data);
+            return null;
         }
     } catch (error) {
         console.error("Error fetching topic details:", error);
+        return null;
     } 
 };
 
-export const fetchPost = async (postId: string) => {
+export const fetchPost = async (postId: string): Promise<Post | null> => {
     try {
         const stored = localStorage.getItem("token");
         const token = stored ? JSON.parse(stored).token : null;
@@ -57,7 +63,7 @@ export const fetchPost = async (postId: string) => {
         });
         const data = await response.text();
         if (response.ok) {
-            const postData = JSON.parse(data);
+            const postData: Post = JSON.parse(data);
             return postData;
         } else {
             console.error("Error fetching posts:", data);
@@ -69,7 +75,7 @@ export const fetchPost = async (postId: string) => {
     }
 };
 
-export const fetchTopics = async () => {
+export const fetchTopics = async (): Promise<Topic[]> => {
     try {
         const stored = localStorage.getItem("token");
         const token = stored ? JSON.parse(stored).token : null;
@@ -82,20 +88,21 @@ export const fetchTopics = async () => {
         });
         const data = await response.text();
         if (response.ok) {
-            const topicsData = JSON.parse(data);
-            const sortedTopics = topicsData.sort((a: any, b: any) => a.name.localeCompare(b.name));
-            // TODO: Add sorting function later
+            const topicsData: Topic[] = JSON.parse(data);
+            const sortedTopics = topicsData.sort((a: Topic, b: Topic) => a.name.localeCompare(b.name));
             return sortedTopics;
         } else {
             console.error("Error fetching topics:", data);
+            return [];
         }
     } catch (error) {
         console.error("Failed to fetch topics:", error);
+        return [];
     }
 };
 
 
-export const fetchPosts = async (topic: string) => {
+export const fetchPosts = async (topic: string): Promise<Post[]> => {
     try {
         const stored = localStorage.getItem("token");
         const token = stored ? JSON.parse(stored).token : null;
@@ -108,18 +115,20 @@ export const fetchPosts = async (topic: string) => {
         });
         const data = await response.text();
         if (response.ok) {
-            const postsData = JSON.parse(data);
+            const postsData: Post[] = JSON.parse(data);
             console.log("Fetched posts:", postsData);
             return postsData;
         } else {
             console.error("Error fetching posts:", data);
+            return [];
         }
     } catch (error) {
         console.error("Failed to fetch posts:", error);
+        return [];
     }
 };
 
-export const fetchComments = async (postId: string) => {
+export const fetchComments = async (postId: string): Promise<Comment[]> => {
     try {
         const stored = localStorage.getItem("token");
         const token = stored ? JSON.parse(stored).token : null;
@@ -132,12 +141,14 @@ export const fetchComments = async (postId: string) => {
         });
         const data = await response.text();
         if (response.ok) {
-            const postsData = JSON.parse(data);
+            const postsData: Comment[] = JSON.parse(data);
             return postsData;
         } else {
             console.error("Error fetching comments:", data);
+            return [];
         }
     } catch (error) {
         console.error("Failed to fetch comments:", error);
+        return [];
     }
 };

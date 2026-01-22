@@ -3,7 +3,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
 const SnackbarContext = createContext({
-  showSnackbar: (message: string, severity: 'success' | 'info' | 'warning' | 'error') => {},
+  showSnackbar: (_message: string, _severity: 'success' | 'info' | 'warning' | 'error') => {},
 });
 
 export const SnackbarProvider = ({ children }: { children: React.ReactNode }) => {

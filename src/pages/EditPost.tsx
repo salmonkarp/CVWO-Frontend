@@ -14,10 +14,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import type { DashboardProps } from "./Dashboard";
 import { ArrowBack } from "@mui/icons-material";
 import { fetchPost } from "../helpers/fetchers";
+import { useSnackbar } from "../SnackbarContext";
 
 export default function AddTopic(props: DashboardProps) {
   const { onLogout } = props;
   const params = useParams<{topic: string, postId: string}>();
+  const { showSnackbar } = useSnackbar();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -50,6 +52,7 @@ export default function AddTopic(props: DashboardProps) {
       const data = await response.text();
       if (response.ok) {
         navigate("/t/" + params.topic + "/p/" + params.postId);
+        showSnackbar("Post edited successfully", "success");
       } else {
         setIsError(true);
         setErrorMessage(
@@ -67,8 +70,8 @@ export default function AddTopic(props: DashboardProps) {
     useEffect(() => {
         const loadData = async () => {
             const postData = await fetchPost(params.postId || "");
-            setTitle(postData.title);
-            setBody(postData.body);
+            setTitle(postData?.title || '');
+            setBody(postData?.body || '');
         };
         loadData();
     }, [params.postId]);

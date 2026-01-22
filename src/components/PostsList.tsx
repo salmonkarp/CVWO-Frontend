@@ -2,6 +2,7 @@ import { Box, Grid, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import PostCard from "./PostCard";
 import { fetchPosts } from "../helpers/fetchers";
+import type { Post } from "../types";
 
 const POSTS_PER_PAGE = 6;
 
@@ -10,7 +11,7 @@ export default function PostsList(props: {
   ownUsername: string;
 }) {
   const topic = props.topic;
-  const [posts, setPosts] = useState<Array<any>>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [page, setPage] = useState(1);
 
   const handlePageChange = (value: number) => {
@@ -19,7 +20,7 @@ export default function PostsList(props: {
 
   useEffect(() => {
     const loadData = async () => {
-      setPosts(await fetchPosts(topic || ""));
+      setPosts(await fetchPosts(topic));
     };
     loadData();
   }, [topic]);

@@ -18,6 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { ArrowBack } from "@mui/icons-material";
 import { fetchTopic } from "../helpers/fetchers";
+import { useSnackbar } from "../SnackbarContext";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -36,13 +37,14 @@ const maxFileSizeInBytes = 2 * 1024 * 1024;
 export default function EditTopic(props: DashboardProps) {
     const { onLogout } = props;
     const params = useParams<{topic: string}>();
+    const { showSnackbar } = useSnackbar();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [imageUrl, setImageUrl] = useState("");
-    const [imageUpdatedAt, setImageUpdatedAt] = useState(0);
+    const [imageUpdatedAt, setImageUpdatedAt] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const navigate = useNavigate();
 
@@ -103,6 +105,7 @@ export default function EditTopic(props: DashboardProps) {
       const data = await response.text();
       if (response.ok) {
         navigate("/t/" + name);
+        showSnackbar("Topic edited successfully", "success");
       } else {
         setIsError(true);
         setErrorMessage(
@@ -120,10 +123,10 @@ export default function EditTopic(props: DashboardProps) {
   useEffect(() => {
     const loadData = async () => {
       const topicData = await fetchTopic(params.topic || '');
-      setName(topicData.name);
-      setDescription(topicData.description);
-      setImageUrl(topicData.imageUrl);
-      setImageUpdatedAt(topicData.imageUpdatedAt);
+      setName(topicData?.name || '');
+      setDescription(topicData?.description || '');
+      setImageUrl(topicData?.imageUrl || '');
+      setImageUpdatedAt(topicData?.imageUpdatedAt || "");
     }
     loadData();
   }, [params]);

@@ -13,10 +13,12 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { DashboardProps } from "./Dashboard";
 import { ArrowBack } from "@mui/icons-material";
+import { useSnackbar } from "../SnackbarContext";
 
 export default function AddTopic(props: DashboardProps) {
   const { onLogout } = props;
   const topic = useParams<{ topic: string }>();
+  const { showSnackbar } = useSnackbar();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -49,6 +51,7 @@ export default function AddTopic(props: DashboardProps) {
       const data = await response.text();
       if (response.ok) {
         navigate("/t/" + topic.topic);
+        showSnackbar("Post added successfully", "success");
       } else {
         setIsError(true);
         setErrorMessage(data || "Failed to submit the post. Please try again.");

@@ -26,6 +26,7 @@ import { ArrowBack } from "@mui/icons-material";
 import { getTimeElapsed } from "../helpers/helpers";
 import ReplyIcon from "@mui/icons-material/Reply";
 import { fetchPost, fetchTopic, fetchUser } from "../helpers/fetchers";
+import type { Post, Topic } from "../types";
 import CommentsList from "../components/CommentsList";
 import ReplyInput from "../components/ReplyInput";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -43,13 +44,13 @@ export default function Topic(props: {
   const { topic, postId } = useParams<{ topic: string; postId: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
-  const [postDetails, setPostDetails] = useState<any>(null);
+  const [postDetails, setPostDetails] = useState<Post | null>(null);
   const [postImage, setPostImage] = useState<string>("");
   const [postImageUpdatedAt, setPostImageUpdatedAt] = useState<string>("");
   const [postUsername, setPostUsername] = useState<string>("");
   const [postScore, setPostScore] = useState<number>(0);
   const [selfVote, setSelfVote] = useState<number>(0);
-  const [topicDetails, setTopicDetails] = useState<any>(null);
+  const [topicDetails, setTopicDetails] = useState<Topic | null>(null);
   const [commentsRefreshTrigger, setCommentsRefreshTrigger] =
     useState<number>(0);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
@@ -57,12 +58,12 @@ export default function Topic(props: {
   const [isMainReplyFocused, setIsMainReplyFocused] = useState(false);
   const navigate = useNavigate();
 
-  const loadUserData = async (postData: any) => {
-    const userData = await fetchUser(postData.creator || "");
+  const loadUserData = async (postData: Post) => {
+    const userData = await fetchUser(postData.creator);
     if (userData) setPostUsername(userData.username);
-    if (userData.imageUrl)
+    if (userData?.imageUrl)
       setPostImage(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
-    setPostImageUpdatedAt(userData.imageUpdatedAt);
+    setPostImageUpdatedAt(userData?.imageUpdatedAt || "");
   };
 
   const handleDelete = async () => {
@@ -87,6 +88,7 @@ export default function Topic(props: {
       await response.text();
       if (response.ok) {
         navigate("/t/" + topic);
+        showSnackbar("Post deleted successfully", "success");
       }
     } finally {
       setIsSubmitting(false);
@@ -100,8 +102,8 @@ export default function Topic(props: {
       const postData = await fetchPost(postId || "");
       setPostDetails(postData);
       if (postData) await loadUserData(postData);
-      setPostScore(postData.score || 0);
-      setSelfVote(postData.user_vote || 0);
+      setPostScore(postData?.score || 0);
+      setSelfVote(postData?.user_vote || 0);
       setIsLoading(false);
       setHasLoaded(true);
     };
@@ -243,8 +245,8 @@ export default function Topic(props: {
                   </Avatar>
                   <Typography variant="subtitle1" color="text.secondary">
                     Posted by u/{postUsername} in t/{topic}{" "}
-                    {postDetails.is_edited ? "(edited)" : ""} -{" "}
-                    {getTimeElapsed(postDetails.created_at)}
+                    {postDetails?.is_edited ? "(edited)" : ""} -{" "}
+                    {getTimeElapsed(postDetails?.created_at || "")}
                   </Typography>
                 </Box>
                 <Typography

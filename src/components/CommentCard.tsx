@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { fetchUser } from "../helpers/fetchers";
+import type { Comment } from "../types";
 import { getTimeElapsed } from "../helpers/helpers";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -26,7 +27,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { useSnackbar } from "../SnackbarContext";
 
 export default function CommentCard(props: {
-  comment: any;
+  comment: Comment;
   ownUsername: string;
   onCommentUpdate?: () => void;
   isReply?: boolean;
@@ -40,7 +41,7 @@ export default function CommentCard(props: {
     useState<string>("");
   const [commentBody, setCommentBody] = useState<string>("");
   const [originalCommentBody, setOriginalCommentBody] = useState<string>("");
-  const [commentChildren, setCommentChildren] = useState<any[]>([]);
+  const [commentChildren, setCommentChildren] = useState<Comment[]>([]);
   const [reply, setReply] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isReplying, setIsReplying] = useState<boolean>(false);
@@ -152,22 +153,22 @@ export default function CommentCard(props: {
 
   useEffect(() => {
     const loadUserData = async () => {
-      const userData = await fetchUser(comment.creator || "");
+      const userData = await fetchUser(comment.creator);
       if (userData) {
         setCommentUsername(userData.username);
       }
-      if (userData.imageUrl) {
+      if (userData?.imageUrl) {
         setCommentImage(
           import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl,
         );
-        setCommentImageUpdatedAt(userData.imageUpdatedAt);
+        setCommentImageUpdatedAt(userData.imageUpdatedAt || "");
       }
       setHasLoaded(true);
     };
 
     setCommentBody(comment.body);
     setOriginalCommentBody(comment.body);
-    setCommentChildren(comment.children || []);
+    setCommentChildren(comment.children as Comment[]);
     loadUserData();
   }, [comment]);
 
@@ -263,7 +264,7 @@ export default function CommentCard(props: {
               }}
             >
               u/{commentUsername} {comment.is_edited ? "(edited) " : ""}-{" "}
-              {getTimeElapsed(comment.created_at)}
+              {getTimeElapsed(comment.created_at || "")}
             </Typography>
           </Box>
           <form onSubmit={handleSubmit} style={{ display: "contents" }}>
@@ -277,15 +278,6 @@ export default function CommentCard(props: {
             >
               <Box sx={{ flex: 1 }}>
                 <Typography
-                  variant="h6"
-                  sx={{
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {comment.title}
-                </Typography>
-                <Typography
                   variant="body1"
                   sx={{
                     whiteSpace: "pre-wrap",
@@ -296,7 +288,7 @@ export default function CommentCard(props: {
                   {commentBody}
                 </Typography>
                 <TextField
-                  defaultValue={comment.body}
+                  defaultValue={comment.body || ""}
                   value={commentBody}
                   onChange={(e) => setCommentBody(e.target.value)}
                   sx={{ display: !isEditing ? "none" : "block" }}

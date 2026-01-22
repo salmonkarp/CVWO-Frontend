@@ -34,7 +34,7 @@ export default function Dashboard(props: DashboardProps) {
           Start the discussion now.
         </Typography>
         <TopicsList></TopicsList>
-        {username == "admin" && ( //TODO: Superficial, add verification on backend later
+        {username == "admin" && (
         <Fab color="secondary" aria-label="Add topic" size="large" onClick={() => navigate("/addtopic")}
           sx={
               {

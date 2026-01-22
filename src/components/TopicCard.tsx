@@ -7,8 +7,9 @@ import {
   CardActionArea,
 } from "@mui/material";
 import { useNavigate } from "react-router";
+import type { Topic } from "../types";
 
-export default function TopicCard(props: { topic: any }) {
+export default function TopicCard(props: { topic: Topic }) {
   const { topic } = props;
   const navigate = useNavigate();
   return (

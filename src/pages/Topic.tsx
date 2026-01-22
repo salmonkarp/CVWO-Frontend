@@ -24,18 +24,21 @@ import { useEffect, useState } from "react";
 import PostsList from "../components/PostsList";
 import AddIcon from "@mui/icons-material/Add";
 import { fetchTopic } from "../helpers/fetchers";
+import type { Topic } from "../types";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import { useSnackbar } from "../SnackbarContext";
 
 export default function Topic(props: {
   username: string;
   onLogout: () => void;
 }) {
   const { username, onLogout } = props;
+  const { showSnackbar } = useSnackbar();
   const { topic } = useParams<{ topic: string }>();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [topicDetails, setTopicDetails] = useState<any>(null);
+  const [topicDetails, setTopicDetails] = useState<Topic | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -68,6 +71,7 @@ export default function Topic(props: {
       await response.text();
       if (response.ok) {
         navigate("/dashboard");
+        showSnackbar("Topic deleted successfully", "success");
       }
     } finally {
       setIsSubmitting(false);

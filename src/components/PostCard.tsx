@@ -11,13 +11,14 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { fetchUser } from "../helpers/fetchers";
+import type { Post } from "../types";
 import { getTimeElapsed } from "../helpers/helpers";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { useSnackbar } from "../SnackbarContext";
 
-export default function PostCard(props: { post: any; ownUsername: string }) {
+export default function PostCard(props: { post: Post; ownUsername: string }) {
   const { post } = props;
   const { topic } = useParams<{ topic: string }>();
   const { showSnackbar } = useSnackbar();
@@ -31,13 +32,13 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
 
   useEffect(() => {
     const loadUserData = async () => {
-      const userData = await fetchUser(post.creator || "");
+      const userData = await fetchUser(post.creator);
       if (userData) {
         setPostUsername(userData.username);
       }
-      if (userData.imageUrl) {
+      if (userData?.imageUrl) {
         setPostImage(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
-        setPostImageUpdatedAt(userData.imageUpdatedAt);
+        setPostImageUpdatedAt(userData.imageUpdatedAt || "");
       }
       setHasLoaded(true);
     };
@@ -52,7 +53,7 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
     const delta = newSelf - selfVote;
     
     const payload = {
-      post_id: parseInt(post.id || ''),
+      post_id: post.id,
       is_positive: newSelf == 0 ? null : newSelf == 1 ? true : false,
     }
     try {

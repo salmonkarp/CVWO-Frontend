@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { ArrowBack } from "@mui/icons-material";
+import { useSnackbar } from "../SnackbarContext";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -32,6 +33,7 @@ const maxFileSizeInBytes = 2 * 1024 * 1024;
 
 export default function AddTopic(props: DashboardProps) {
   const { onLogout } = props;
+  const { showSnackbar } = useSnackbar();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -97,6 +99,7 @@ export default function AddTopic(props: DashboardProps) {
       const data = await response.text();
       if (response.ok) {
         navigate("/topics");
+        showSnackbar("Topic added successfully", "success");
       } else {
         setIsError(true);
         setErrorMessage(
