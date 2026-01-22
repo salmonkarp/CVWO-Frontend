@@ -109,6 +109,7 @@ export const fetchPosts = async (topic: string) => {
         const data = await response.text();
         if (response.ok) {
             const postsData = JSON.parse(data);
+            console.log("Fetched posts:", postsData);
             return postsData;
         } else {
             console.error("Error fetching posts:", data);

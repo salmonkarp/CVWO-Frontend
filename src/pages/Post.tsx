@@ -30,6 +30,8 @@ import CommentsList from "../components/CommentsList";
 import ReplyInput from "../components/ReplyInput";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
 export default function Topic(props: {
   username: string;
@@ -43,6 +45,8 @@ export default function Topic(props: {
   const [postImage, setPostImage] = useState<string>("");
   const [postImageUpdatedAt, setPostImageUpdatedAt] = useState<string>("");
   const [postUsername, setPostUsername] = useState<string>("");
+  const [postScore, setPostScore] = useState<number>(0);
+  const [selfVote, setSelfVote] = useState<number>(0);
   const [topicDetails, setTopicDetails] = useState<any>(null);
   const [commentsRefreshTrigger, setCommentsRefreshTrigger] =
     useState<number>(0);
@@ -56,7 +60,7 @@ export default function Topic(props: {
     if (userData) setPostUsername(userData.username);
     if (userData.imageUrl)
       setPostImage(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
-      setPostImageUpdatedAt(userData.imageUpdatedAt);
+    setPostImageUpdatedAt(userData.imageUpdatedAt);
   };
 
   const handleDelete = async () => {
@@ -76,7 +80,7 @@ export default function Topic(props: {
             }`,
           },
           body: JSON.stringify(payload),
-        }
+        },
       );
       await response.text();
       if (response.ok) {
@@ -94,11 +98,49 @@ export default function Topic(props: {
       const postData = await fetchPost(postId || "");
       setPostDetails(postData);
       if (postData) await loadUserData(postData);
+      setPostScore(postData.score || 0);
+      setSelfVote(postData.user_vote || 0);
       setIsLoading(false);
       setHasLoaded(true);
     };
     loadData();
   }, [topic, postId]);
+
+  const vote = async (v: number) => {
+    const newSelf = selfVote === v ? 0 : v;
+    const delta = newSelf - selfVote;
+    
+    const payload = {
+      post_id: parseInt(postId || ''),
+      is_positive: newSelf == 0 ? null : newSelf == 1 ? true : false,
+    }
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_BACKEND_API_URL + "/votepost",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("token") || "").token
+            }`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      const data = await response.text();
+      if (response.ok) {
+        setSelfVote(newSelf);
+        setPostScore((s) => s + delta);
+      } else {
+        alert(data || "Failed to submit vote. Please try again.");
+      }
+    } catch {
+      alert("Failed to submit vote. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Container sx={{ display: "flex", minHeight: "100vh" }}>
@@ -184,7 +226,11 @@ export default function Topic(props: {
                   }}
                 >
                   <Avatar
-                    src={postImage ? postImage + `?v=${postImageUpdatedAt || Date.now()}` : ""}
+                    src={
+                      postImage
+                        ? postImage + `?v=${postImageUpdatedAt || Date.now()}`
+                        : ""
+                    }
                     sx={{
                       width: 32,
                       height: 32,
@@ -194,7 +240,8 @@ export default function Topic(props: {
                     {postUsername ? postUsername[0].toLocaleLowerCase() : ""}
                   </Avatar>
                   <Typography variant="subtitle1" color="text.secondary">
-                    Posted by u/{postUsername} in t/{topic} {postDetails.is_edited ? "(edited)" : ""} -{" "}
+                    Posted by u/{postUsername} in t/{topic}{" "}
+                    {postDetails.is_edited ? "(edited)" : ""} -{" "}
                     {getTimeElapsed(postDetails.created_at)}
                   </Typography>
                 </Box>
@@ -217,26 +264,38 @@ export default function Topic(props: {
                 >
                   {postDetails?.body}
                 </Typography>
-                {ownUsername == postUsername && (
-                  <CardActions
-                    sx={{ display: "flex", justifyContent: "flex-end" }}
-                  >
-                    <IconButton
-                      onClick={() =>
-                        navigate("/t/" + topic + "/p/" + postId + "/edit")
-                      }
-                      color="primary"
-                    >
-                      <EditIcon />
+
+                <CardActions
+                  sx={{ display: "flex", justifyContent: "end", p: 0, mt: 2 }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, backgroundColor: "background.paper", border: '1px solid', borderColor: 'divider', borderRadius: 1, px: 1 }}>
+                    <IconButton size="small" onClick={() => vote(1)} color={selfVote === 1 ? "primary" : "default"}>
+                      <ArrowUpwardIcon />
                     </IconButton>
-                    <IconButton
-                      onClick={() => setIsDeleteDialogOpen(true)}
-                      color="secondary"
-                    >
-                      <DeleteIcon />
+                    <Typography fontWeight={700} color="text.primary">{postScore}</Typography>
+                    <IconButton size="small" onClick={() => vote(-1)} color={selfVote === -1 ? "primary" : "default"}>
+                      <ArrowDownwardIcon />
                     </IconButton>
-                  </CardActions>
-                )}
+                  </Box>
+                  {ownUsername == postUsername && (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <IconButton
+                        onClick={() =>
+                          navigate("/t/" + topic + "/p/" + postId + "/edit")
+                        }
+                        color="primary"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => setIsDeleteDialogOpen(true)}
+                        color="secondary"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  )}
+                </CardActions>
               </CardContent>
             )}
             <CardMedia
@@ -277,7 +336,9 @@ export default function Topic(props: {
               bottom: 32,
               right: 32,
             }}
-            onClick={() => {setIsMainReplyFocused(true);}}
+            onClick={() => {
+              setIsMainReplyFocused(true);
+            }}
           >
             <ReplyIcon></ReplyIcon>
           </Fab>
