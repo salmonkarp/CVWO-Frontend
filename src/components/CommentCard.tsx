@@ -1,8 +1,14 @@
 import {
   Avatar,
   Box,
+  Button,
   Card,
   CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Skeleton,
   TextField,
@@ -17,6 +23,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import ReplyIcon from "@mui/icons-material/Reply";
 import SendIcon from "@mui/icons-material/Send";
+import { useSnackbar } from "../SnackbarContext";
 
 export default function CommentCard(props: {
   comment: any;
@@ -24,6 +31,7 @@ export default function CommentCard(props: {
   onCommentUpdate?: () => void;
   isReply?: boolean;
 }) {
+  const { showSnackbar } = useSnackbar();
   const { ownUsername, comment, onCommentUpdate } = props;
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
   const [commentUsername, setCommentUsername] = useState<string>("");
@@ -37,6 +45,7 @@ export default function CommentCard(props: {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isReplying, setIsReplying] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,17 +68,16 @@ export default function CommentCard(props: {
           body: JSON.stringify(payload),
         },
       );
-      const data = await response.text();
       if (response.ok) {
         setIsEditing(false);
         if (onCommentUpdate) {
           onCommentUpdate();
         }
       } else {
-        alert("Failed to update comment: " + data);
+        
       }
     } catch (error) {
-      alert("Error updating comment: " + error);
+      showSnackbar("Error submitting edit: " + error, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -105,20 +113,16 @@ export default function CommentCard(props: {
           onCommentUpdate();
         }
       } else {
-        alert("Failed to submit reply: " + data);
+        showSnackbar("Failed to submit reply: " + data, "error");
       }
     } catch (error) {
-      alert("Error submitting reply: " + error);
+      showSnackbar("Error submitting reply: " + error, "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this comment?")) {
-      //TODO: Replace this later with real MUI dialog
-      return;
-    }
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_API_URL + "/deletecomment",
@@ -139,10 +143,10 @@ export default function CommentCard(props: {
           onCommentUpdate();
         }
       } else {
-        alert("Failed to delete comment: " + data);
+        showSnackbar("Failed to delete comment: " + data, "error");
       }
     } catch (error) {
-      alert("Error deleting comment: " + error);
+      showSnackbar("Error deleting comment: " + error, "error");
     }
   };
 
@@ -178,6 +182,31 @@ export default function CommentCard(props: {
       }}
       elevation={props.isReply ? 0 : 1}
     >
+      <Dialog
+        open={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Delete comment?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            This is permanent and cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setIsDeleteDialogOpen(false)}
+            autoFocus
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button onClick={() => handleDelete()} disabled={isSubmitting}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       {!hasLoaded ? (
         <CardContent>
           <Box
@@ -297,7 +326,7 @@ export default function CommentCard(props: {
                   </IconButton>
                   <IconButton
                     size="small"
-                    onClick={handleDelete}
+                    onClick={() => setIsDeleteDialogOpen(true)}
                     sx={{ display: isEditing || isReplying ? "none" : "block" }}
                   >
                     <DeleteIcon fontSize="small" />

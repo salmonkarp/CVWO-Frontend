@@ -48,7 +48,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    // verify token validity on app load
     try {
       if (token) {
         fetch(import.meta.env.VITE_BACKEND_API_URL + "/protected", {

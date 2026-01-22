@@ -32,11 +32,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import { useSnackbar } from "../SnackbarContext";
 
 export default function Topic(props: {
   username: string;
   onLogout: () => void;
 }) {
+  const { showSnackbar } = useSnackbar();
   const { username: ownUsername, onLogout } = props;
   const { topic, postId } = useParams<{ topic: string; postId: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -133,10 +135,10 @@ export default function Topic(props: {
         setSelfVote(newSelf);
         setPostScore((s) => s + delta);
       } else {
-        alert(data || "Failed to submit vote. Please try again.");
+        showSnackbar("Failed to submit vote: " + data, "error");
       }
     } catch {
-      alert("Failed to submit vote. Please try again.");
+      showSnackbar("Error submitting vote", "error");
     } finally {
       setIsSubmitting(false);
     }

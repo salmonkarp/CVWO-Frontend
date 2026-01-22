@@ -1,5 +1,5 @@
 import {
-    Box,
+  Box,
   Button,
   Container,
   IconButton,
@@ -16,7 +16,7 @@ import { ArrowBack } from "@mui/icons-material";
 
 export default function AddTopic(props: DashboardProps) {
   const { onLogout } = props;
-  const topic = useParams<{topic: string}>();
+  const topic = useParams<{ topic: string }>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -28,10 +28,10 @@ export default function AddTopic(props: DashboardProps) {
     e.preventDefault();
     setIsSubmitting(true);
     const payload = {
-        title: title,
-        body: body,
-        topic: topic.topic,
-    }
+      title: title,
+      body: body,
+      topic: topic.topic,
+    };
     try {
       const response = await fetch(
         import.meta.env.VITE_BACKEND_API_URL + "/addpost",
@@ -44,16 +44,14 @@ export default function AddTopic(props: DashboardProps) {
             }`,
           },
           body: JSON.stringify(payload),
-        }
+        },
       );
       const data = await response.text();
       if (response.ok) {
         navigate("/t/" + topic.topic);
       } else {
         setIsError(true);
-        setErrorMessage(
-          data || "Failed to submit the post. Please try again."
-        );
+        setErrorMessage(data || "Failed to submit the post. Please try again.");
       }
     } catch {
       setIsError(true);
@@ -71,8 +69,8 @@ export default function AddTopic(props: DashboardProps) {
       <Container
         sx={{
           p: {
-              md: 4,
-              xs: 2
+            md: 4,
+            xs: 2,
           },
           display: "flex",
           flexDirection: "column",
@@ -82,7 +80,7 @@ export default function AddTopic(props: DashboardProps) {
         }}
       >
         <Toolbar />
-        
+
         <form onSubmit={handleSubmit} style={{ display: "contents" }}>
           <Paper
             sx={{
@@ -91,39 +89,50 @@ export default function AddTopic(props: DashboardProps) {
               flexDirection: "column",
               gap: 2,
               width: {
-                  xs: "80%",
-                  md: 400
+                xs: "80%",
+                md: 400,
               },
               margin: "0 auto",
             }}
           >
-            <Box sx={{ height: 20, position: 'absolute', ml: -3, mt: -3}}>
-                <IconButton onClick={() => navigate('/t/' + topic.topic)}>
+            <Box sx={{ height: 20, position: "absolute", ml: -3, mt: -3 }}>
+              <IconButton onClick={() => navigate("/t/" + topic.topic)}>
                 <ArrowBack />
-                </IconButton>
+              </IconButton>
             </Box>
-            <Typography variant="h6" align="left" sx={{mt: 3}}>
-              Add a new post to <Box fontWeight={700} display="inline">t/{topic.topic}</Box>
+            <Typography variant="h6" align="left" sx={{ mt: 3 }}>
+              Add a new post to{" "}
+              <Box fontWeight={700} display="inline">
+                t/{topic.topic}
+              </Box>
             </Typography>
             <TextField
-                key="title"
-                label="Title"
-                variant="outlined"
-                value={title}
-                onChange={(e) => {setTitle(e.target.value); setIsError(false); setErrorMessage("");}}
-                required
+              key="title"
+              label="Title"
+              variant="outlined"
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                setIsError(false);
+                setErrorMessage("");
+              }}
+              required
             ></TextField>
             <TextField
-                key="body"
-                label="Body"
-                variant="outlined"
-                multiline
-                rows = {4}
-                maxRows={5}
-                value={body}
-                error={tooLong}
-                helperText={tooLong ? "Body cannot exceed 10 lines." : ""}
-                onChange={(e) => {setBody(e.target.value); setIsError(false); setErrorMessage("");}}
+              key="body"
+              label="Body"
+              variant="outlined"
+              multiline
+              rows={4}
+              maxRows={5}
+              value={body}
+              error={tooLong}
+              helperText={tooLong ? "Body cannot exceed 10 lines." : ""}
+              onChange={(e) => {
+                setBody(e.target.value);
+                setIsError(false);
+                setErrorMessage("");
+              }}
             ></TextField>
 
             {isError && (

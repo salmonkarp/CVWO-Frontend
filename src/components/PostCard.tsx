@@ -15,10 +15,12 @@ import { getTimeElapsed } from "../helpers/helpers";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import { useSnackbar } from "../SnackbarContext";
 
 export default function PostCard(props: { post: any; ownUsername: string }) {
   const { post } = props;
   const { topic } = useParams<{ topic: string }>();
+  const { showSnackbar } = useSnackbar();
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
   const [postUsername, setPostUsername] = useState<string>("");
   const [postImage, setPostImage] = useState<string>("");
@@ -72,10 +74,10 @@ export default function PostCard(props: { post: any; ownUsername: string }) {
         setSelfVote(newSelf);
         setPostScore((s) => s + delta);
       } else {
-        alert(data || "Failed to submit vote. Please try again.");
+        showSnackbar("Failed to submit vote: " + data, "error");
       }
     } catch {
-      alert("Failed to submit vote. Please try again.");
+      showSnackbar("Error submitting vote", "error");
     }
   };
 

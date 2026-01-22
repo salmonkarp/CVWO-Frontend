@@ -4,6 +4,7 @@ import type { DashboardProps } from "./Dashboard";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useEffect, useState } from "react";
 import { fetchUser } from "../helpers/fetchers";
+import { useSnackbar } from "../SnackbarContext";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -20,7 +21,7 @@ const VisuallyHiddenInput = styled('input')({
 const maxFileSizeInBytes = 2 * 1024 * 1024;
 
 export default function Account(props: DashboardProps) {
-
+    const { showSnackbar } = useSnackbar();
     const { username, onLogout } = props;
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isError, setIsError] = useState(false);
@@ -74,6 +75,7 @@ export default function Account(props: DashboardProps) {
             const data = await response.text();
             if (response.ok) {
                 loadUserData();
+                showSnackbar("Profile updated successfully.", "success");
             } else {
                 setIsError(true);
                 setErrorMessage(
