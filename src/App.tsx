@@ -11,6 +11,7 @@ import AddPost from "./pages/AddPost";
 import EditTopic from "./pages/EditTopic";
 import Post from "./pages/Post";
 import EditPost from "./pages/EditPost";
+import About from "./pages/About";
 
 const theme = createTheme({
   palette: {
@@ -95,6 +96,16 @@ const App = () => {
           element={
             isLoggedIn ? (
               <Dashboard username={username || ""} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            isLoggedIn ? (
+              <About username={username || ""} onLogout={handleLogout} />
             ) : (
               <Navigate to="/login" />
             )

@@ -10,6 +10,7 @@ import {
   TextField,
   Toolbar,
   Typography,
+  Fade,
 } from "@mui/material";
 import NavBar from "../components/NavBar";
 import type { DashboardProps } from "./Dashboard";
@@ -47,6 +48,7 @@ export default function EditTopic(props: DashboardProps) {
     const [imageUpdatedAt, setImageUpdatedAt] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const navigate = useNavigate();
+    const [fadeIn, setFadeIn] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsError(false);
@@ -127,6 +129,7 @@ export default function EditTopic(props: DashboardProps) {
       setDescription(topicData?.description || '');
       setImageUrl(topicData?.imageUrl || '');
       setImageUpdatedAt(topicData?.imageUpdatedAt || "");
+      setFadeIn(true);
     }
     loadData();
   }, [params]);
@@ -148,7 +151,8 @@ export default function EditTopic(props: DashboardProps) {
         }}
       >
         <Toolbar />
-        <form onSubmit={handleSubmit} style={{ display: "contents" }}>
+        <form onSubmit={handleSubmit}>
+          <Fade in={fadeIn} timeout={500}>
           <Paper
             sx={{
               p: 4,
@@ -237,6 +241,7 @@ export default function EditTopic(props: DashboardProps) {
               Submit
             </Button>
           </Paper>
+          </Fade>
         </form>
       </Container>
     </Container>

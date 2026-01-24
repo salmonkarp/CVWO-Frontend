@@ -7,9 +7,10 @@ import {
   TextField,
   Toolbar,
   Typography,
+  Fade,
 } from "@mui/material";
 import NavBar from "../components/NavBar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { DashboardProps } from "./Dashboard";
 import { ArrowBack } from "@mui/icons-material";
@@ -25,6 +26,11 @@ export default function AddTopic(props: DashboardProps) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const navigate = useNavigate();
+  const [fadeIn, setFadeIn] = useState(false);
+
+  useEffect(() => {
+    setFadeIn(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -84,7 +90,8 @@ export default function AddTopic(props: DashboardProps) {
       >
         <Toolbar />
 
-        <form onSubmit={handleSubmit} style={{ display: "contents" }}>
+        <form onSubmit={handleSubmit}>
+          <Fade in={fadeIn} timeout={500}>
           <Paper
             sx={{
               p: 4,
@@ -155,6 +162,7 @@ export default function AddTopic(props: DashboardProps) {
               Submit
             </Button>
           </Paper>
+          </Fade>
         </form>
       </Container>
     </Container>

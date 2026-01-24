@@ -7,6 +7,7 @@ import {
   TextField,
   Toolbar,
   Typography,
+  Fade,
 } from "@mui/material";
 import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ export default function AddTopic(props: DashboardProps) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const navigate = useNavigate();
+  const [fadeIn, setFadeIn] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -68,12 +70,13 @@ export default function AddTopic(props: DashboardProps) {
   };
 
     useEffect(() => {
-        const loadData = async () => {
-            const postData = await fetchPost(params.postId || "");
-            setTitle(postData?.title || '');
-            setBody(postData?.body || '');
-        };
-        loadData();
+      const loadData = async () => {
+        const postData = await fetchPost(params.postId || "");
+        setTitle(postData?.title || '');
+        setBody(postData?.body || '');
+        setFadeIn(true);
+      };
+      loadData();
     }, [params.postId]);
 
     const tooLong = body?.split(/\r?\n|\r|\n/g).length > 10;
@@ -96,7 +99,8 @@ export default function AddTopic(props: DashboardProps) {
       >
         <Toolbar />
         
-        <form onSubmit={handleSubmit} style={{ display: "contents" }}>
+        <form onSubmit={handleSubmit}>
+          <Fade in={fadeIn} timeout={500}>
           <Paper
             sx={{
               p: 4,
@@ -155,6 +159,7 @@ export default function AddTopic(props: DashboardProps) {
               Submit
             </Button>
           </Paper>
+          </Fade>
         </form>
       </Container>
     </Container>

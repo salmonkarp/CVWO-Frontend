@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Container, Paper, styled, TextField, Toolbar, Typography } from "@mui/material";
+import { Avatar, Box, Button, Container, Fade, Paper, styled, TextField, Toolbar, Typography } from "@mui/material";
 import NavBar from "../components/NavBar";
 import type { DashboardProps } from "./Dashboard";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -29,6 +29,7 @@ export default function Account(props: DashboardProps) {
     const [file, setFile] = useState<File | null>(null);
     const [imageUrl, setImageUrl] = useState<string>("");
     const [imageUpdatedAt, setImageUpdatedAt] = useState<string>("");
+    const [fadeIn, setFadeIn] = useState(false);
 
     const loadUserData = async () => {
         const userData = await fetchUser(username || "");
@@ -36,6 +37,7 @@ export default function Account(props: DashboardProps) {
             setImageUrl(import.meta.env.VITE_BACKEND_API_URL + userData.imageUrl);
             setImageUpdatedAt(userData.imageUpdatedAt || '');
         }
+        setFadeIn(true);
     };
 
     useEffect(() => {
@@ -121,8 +123,8 @@ export default function Account(props: DashboardProps) {
         }}
       >
         <Toolbar />
-        
-        <form onSubmit={handleSubmit} style={{display: "contents"}}>
+        <form onSubmit={handleSubmit}>
+          <Fade in={fadeIn} timeout={500}>
             <Paper
                 sx={{
                     p: 4,
@@ -185,8 +187,9 @@ export default function Account(props: DashboardProps) {
                 >
                 Save
                 </Button>
-            </Paper>
-        </form>
+                        </Paper>
+                    </Fade>
+                </form>
         </Container>
     </Container>
   );

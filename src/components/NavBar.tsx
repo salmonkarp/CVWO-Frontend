@@ -1,7 +1,7 @@
 import { AppBar, Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Toolbar, Typography } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import React from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
@@ -16,6 +16,8 @@ const navItems = ['Dashboard', 'Account', 'About'];
 const drawerWidth = 240;
 
 export default function NavBar(props: NavBarProps) {
+    const { pathname } = useLocation();
+    const page = pathname.split('/')[1].toLocaleLowerCase();
     const { onLogout, window } = props;
     const container = window !== undefined ? () => window.document.body : undefined;
     const [isMobileDrawerOpen, setIsMobileDrawerOpen] = React.useState(false);
@@ -44,7 +46,7 @@ export default function NavBar(props: NavBarProps) {
                 </ListSubheader>
             }>
                 <ListItem key={'dashboard'} disablePadding>
-                    <ListItemButton sx={{ textAlign: 'start' }} onClick={() => navigate(`/dashboard`)}>
+                    <ListItemButton onClick={() => navigate('/dashboard')}>
                     <ListItemIcon>
                         <HomeIcon></HomeIcon>
                     </ListItemIcon>
@@ -52,7 +54,7 @@ export default function NavBar(props: NavBarProps) {
                     </ListItemButton>
                 </ListItem>
                 <ListItem key={'account'} disablePadding>
-                    <ListItemButton sx={{ textAlign: 'start' }} onClick={() => navigate(`/account`)}>
+                    <ListItemButton onClick={() => navigate('/account')}>
                     <ListItemIcon>
                         <ManageAccountsIcon></ManageAccountsIcon>
                     </ListItemIcon>
@@ -60,7 +62,7 @@ export default function NavBar(props: NavBarProps) {
                     </ListItemButton>
                 </ListItem>
                 <ListItem key={'about'} disablePadding>
-                    <ListItemButton sx={{ textAlign: 'start' }} onClick={() => navigate(`/about`)}>
+                    <ListItemButton onClick={() => navigate('/about')}>
                     <ListItemIcon>
                         <InfoIcon></InfoIcon>
                     </ListItemIcon>
@@ -112,7 +114,12 @@ export default function NavBar(props: NavBarProps) {
                 </Typography>
                 <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                     {navItems.map((item) => (
-                    <Button key={item} onClick={() => navigate(`/${item.toLowerCase()}`)} color="inherit">
+                    <Button
+                        key={item}
+                        onClick={() => navigate(`/${item.toLowerCase()}`)}
+                        color="inherit"
+                        sx={{ textDecoration: page === item.toLowerCase() ? 'underline' : 'none', textUnderlineOffset: '4px' }}
+                    >
                         {item}
                     </Button>
                     ))}

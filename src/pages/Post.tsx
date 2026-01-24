@@ -34,11 +34,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { useSnackbar } from "../SnackbarContext";
+import type { DashboardProps } from "./Dashboard";
 
-export default function Topic(props: {
-  username: string;
-  onLogout: () => void;
-}) {
+export default function Topic(props: DashboardProps) {
   const { showSnackbar } = useSnackbar();
   const { username: ownUsername, onLogout } = props;
   const { topic, postId } = useParams<{ topic: string; postId: string }>();
@@ -327,7 +325,7 @@ export default function Topic(props: {
           <Typography variant="h6">Replies</Typography>
           <CommentsList
             topic={topic || ""}
-            ownUsername={ownUsername}
+            ownUsername={ownUsername || ""}
             postId={postId || ""}
             refreshTrigger={commentsRefreshTrigger}
           ></CommentsList>

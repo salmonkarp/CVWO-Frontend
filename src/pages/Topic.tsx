@@ -172,7 +172,7 @@ export default function Topic(props: {
               )}
             </Card>
           )}
-          <Typography variant="h6">Most Recent Posts</Typography>
+          <Typography variant="h6">Top Posts</Typography>
           <PostsList topic={topic || ""} ownUsername={username}></PostsList>
           <Fab
             color="secondary"
